@@ -1,5 +1,3 @@
-Here's the reorganized README file for your FL-ChatBot project:
-
 ## FL-ChatBot
 
 FL-ChatBot is a chat application built with React and Flask that allows users to send text messages and images. The application utilizes a federated learning approach for image classification, enabling the chatbot to learn and improve based on user interactions.
