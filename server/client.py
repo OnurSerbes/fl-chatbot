@@ -41,19 +41,38 @@ def predict_image(image_path, model):
     labels = get_labels()
     return labels[predicted_label_index], np.max(predictions)
 
+
 class FederatedClient(NumPyClient):
     def get_parameters(self, config):
         return model.get_weights()
 
     def fit(self, parameters, config):
         model.set_weights(parameters)
-        model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.1)
-        return model.get_weights(), len(X_train), {}
+        history = model.fit(X_train, y_train, epochs=100, batch_size=32, steps_per_epoch=5, validation_split=0.1)
+
+        results = {
+            "loss": history.history["loss"][0],
+            "accuracy": history.history["accuracy"][0],
+            "val_loss": history.history["val_loss"][0],
+            "val_accuracy": history.history["val_accuracy"][0],
+        }
+
+        return model.get_weights(), len(X_train), results
 
     def evaluate(self, parameters, config):
         model.set_weights(parameters)
         loss, accuracy = model.evaluate(X_val, y_val)
+        print("****** CLIENT ACCURACY: ", accuracy, " ******")
+        # Predict labels for validation data
+        y_pred = np.argmax(model.predict(X_val), axis=1)
+
+        # Calculate the number of correct guesses for each label
+        correct_guesses = [np.sum((y_pred == i) & (y_val == i)) for i in range(4)]
+
+        print("Correct Guesses for Each Label:", correct_guesses)
+
         return loss, len(X_val), {"accuracy": accuracy}
+
 
 def run_flower():
     # Configure the client to connect to the server
@@ -68,7 +87,7 @@ if __name__ == '__main__':
 
     port = 5001 + client_id
     threading.Thread(target=run_flower).start()
-    app.run(host="0.0.0.0", port=port, debug=True)
+    #app.run(host="0.0.0.0", port=port, debug=True)
 
 
 
