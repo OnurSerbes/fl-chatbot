@@ -1,17 +1,24 @@
-
 import threading
 import numpy as np
 import sys
+import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import keras as ks
 from flwr.client import start_numpy_client, NumPyClient
 from utils import load_partition, read_img, get_labels
+from werkzeug.utils import secure_filename
 
 # Load server address and port number from command-line arguments or use default
 server_address = "192.168.1.111"
 port_number = "8080"
 
+
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
+# Global list variable to store image paths
+image_paths = []
 
 IMG_SIZE = 160
 model = ks.Sequential([
@@ -24,23 +31,64 @@ model.compile(optimizer='adam', loss=ks.losses.SparseCategoricalCrossentropy(fro
 
 X_train, X_val, y_train, y_val = load_partition(int(sys.argv[1]))
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    file = request.files['file']
-    image_path = "./temp_image.jpg"
-    file.save(image_path)  # Save temporarily
-    predicted_label, probability = predict_image(image_path, model)
-    return jsonify({"label": predicted_label, "probability": float(probability)})
+# Define the labels
+labels = get_labels()
 
-def predict_image(image_path, model):
+def prepare_image(image_path):
+    """Converts the uploaded image to the format expected by the model."""
     img = read_img(image_path)
     img = np.array(img) / 255.0
     img = np.expand_dims(img, axis=0)
-    predictions = model.predict(img)
-    predicted_label_index = np.argmax(predictions)
-    labels = get_labels()
-    return labels[predicted_label_index], np.max(predictions)
+    return img
 
+@app.route('/predict', methods=['POST'])
+def predict():
+    if 'file' not in request.files:
+        return "No file part", 400
+    file = request.files['file']
+    if file.filename == '':
+        return "No selected file", 400
+    if file:
+        # Save temporarily
+        image_path = "./temp_image.jpg"
+        file.save(image_path)
+
+        # Process the image and predict
+        processed_image = prepare_image(image_path)
+        predictions = model.predict(processed_image)
+        predicted_label_index = np.argmax(predictions)
+        probability = np.max(predictions)
+        predicted_label = labels[predicted_label_index]
+
+        # Print on the server terminal
+        print(f"Predicted Label: {predicted_label}, Probability: {probability}")
+
+        # Clean up the saved file (optional)
+        os.remove(image_path)
+
+        return jsonify({
+            "label": predicted_label,
+            "probability": float(probability)
+        })
+
+# Route to receive Blob URL from client
+@app.route("/receive-blob-url", methods=["POST"])
+def receive_blob_url():
+    data = request.json
+    blob_url = data.get("blobUrl")
+    if blob_url:
+        image_paths.append(blob_url)
+        return jsonify({"success": True}), 200
+    else:
+        return jsonify({"success": False, "error": "Blob URL not provided"}), 400
+
+# Route to retrieve and log stored image paths
+@app.route("/get-image-paths")
+def get_image_paths():
+    print("Stored Image Paths:")
+    for path in image_paths:
+        print(path)
+    return jsonify({"imagePaths": image_paths}), 200
 
 class FederatedClient(NumPyClient):
     def get_parameters(self, config):
@@ -81,45 +129,5 @@ def run_flower():
 
 if __name__ == '__main__':
     client_id = int(sys.argv[1])
-    image_path = 'data/Testing/glioma_tumor/image(1).jpg'
-    label, probability = predict_image(image_path, model)
-    print(f"Initial Prediction - Label: {label}, Probability: {probability}")
-
     port = 5001 + client_id
-    threading.Thread(target=run_flower).start()
-    #app.run(host="0.0.0.0", port=port, debug=True)
-
-
-
-
-"""
-# Route to receive Blob URL from client
-@app.route("/receive-blob-url", methods=["POST"])
-def receive_blob_url():
-    data = request.json
-    blob_url = data.get("blobUrl")
-    if blob_url:
-        image_paths.append(blob_url)
-        return jsonify({"success": True}), 200
-    else:
-        return jsonify({"success": False, "error": "Blob URL not provided"}), 400
-
-
-# Route to retrieve and log stored image paths
-@app.route("/get-image-paths")
-def predict_image(image_path, model):
-    img = read_img(image_path)  # Use the read_img function from utils.py
-    img = np.array(img) / 255.0  # Normalize the image
-    img = np.expand_dims(img, axis=0)  # Adjust shape for the model
-
-    # Predict using the model
-    predictions = model.predict(img)
-    predicted_label_index = np.argmax(predictions)
-    labels = get_labels()  # This should match the labels used during training
-    predicted_label = labels[predicted_label_index]
-    probability = np.max(predictions)
-
-    print(f"Predicted Label: {predicted_label}")
-    print(f"Probability: {probability:.2f}")
-
-"""
+    app.run(host="0.0.0.0", port=port, debug=True)
