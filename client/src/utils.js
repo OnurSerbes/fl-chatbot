@@ -1,7 +1,7 @@
 // Function to send Blob URL to the server
 export const sendBlobUrlToServer = async (blobUrl) => {
   try {
-    const response = await fetch("http://localhost:5000/receive-blob-url", {
+    const response = await fetch("http://localhost:5001/receive-blob-url", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -22,7 +22,7 @@ export const sendBlobUrlToServer = async (blobUrl) => {
 // !!Not getting used for now!!
 export const getImagePathsFromServer = async () => {
   try {
-    const response = await fetch("http://localhost:5000/get-image-paths");
+    const response = await fetch("http://localhost:5001/get-image-paths");
     if (response.ok) {
       const data = await response.json();
       console.log("Stored Image Paths:", data.imagePaths);

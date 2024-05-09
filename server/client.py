@@ -34,12 +34,23 @@ X_train, X_val, y_train, y_val = load_partition(int(sys.argv[1]))
 # Define the labels
 labels = get_labels()
 
+
+
+
+##################################
+# Encapsulated metods START here #
+##################################
+
+
 def prepare_image(image_path):
     """Converts the uploaded image to the format expected by the model."""
     img = read_img(image_path)
     img = np.array(img) / 255.0
     img = np.expand_dims(img, axis=0)
     return img
+
+
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -71,6 +82,9 @@ def predict():
             "probability": float(probability)
         })
 
+
+
+
 # Route to receive Blob URL from client
 @app.route("/receive-blob-url", methods=["POST"])
 def receive_blob_url():
@@ -82,6 +96,9 @@ def receive_blob_url():
     else:
         return jsonify({"success": False, "error": "Blob URL not provided"}), 400
 
+
+
+
 # Route to retrieve and log stored image paths
 @app.route("/get-image-paths")
 def get_image_paths():
@@ -89,6 +106,19 @@ def get_image_paths():
     for path in image_paths:
         print(path)
     return jsonify({"imagePaths": image_paths}), 200
+
+# Metod to retrun client id
+@app.route('/get-client-id', methods=['GET'])
+def get_client_id():
+    client_id = int(sys.argv[1])
+    return jsonify({"client_id": client_id}), 200
+
+
+
+
+###############################
+# Federated Client START Here #
+###############################
 
 class FederatedClient(NumPyClient):
     def get_parameters(self, config):
@@ -121,10 +151,16 @@ class FederatedClient(NumPyClient):
 
         return loss, len(X_val), {"accuracy": accuracy}
 
-
+# Start Federated Learning progress
 def run_flower():
     # Configure the client to connect to the server
     start_numpy_client(server_address=f"{server_address}:{port_number}", client=FederatedClient())
+
+
+
+############################
+
+
 
 
 if __name__ == '__main__':
