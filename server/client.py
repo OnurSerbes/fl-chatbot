@@ -10,7 +10,7 @@ from utils import load_partition, read_img, get_labels
 from werkzeug.utils import secure_filename
 
 # Load server address and port number from command-line arguments or use default
-server_address = "192.168.1.111"
+server_address = "10.0.25.106"
 port_number = "8080"
 
 
@@ -48,8 +48,6 @@ def prepare_image(image_path):
     img = np.array(img) / 255.0
     img = np.expand_dims(img, axis=0)
     return img
-
-
 
 
 @app.route('/predict', methods=['POST'])
@@ -98,7 +96,6 @@ def receive_blob_url():
 
 
 
-
 # Route to retrieve and log stored image paths
 @app.route("/get-image-paths")
 def get_image_paths():
@@ -112,6 +109,16 @@ def get_image_paths():
 def get_client_id():
     client_id = int(sys.argv[1])
     return jsonify({"client_id": client_id}), 200
+
+
+# Flask route to start federated learning
+@app.route("/start-fl", methods=['GET'])
+def start_flower():
+    # Start Federated Learning process
+    run_flower()
+    
+    # Return success message
+    return jsonify({"message": "Federated Learning process started successfully"}), 200
 
 
 
@@ -161,9 +168,13 @@ def run_flower():
 ############################
 
 
+# Main Metod
+def main():
+    client_id = int(sys.argv[1])
+    port = 5001 + client_id
+    run_flower()
+    app.run(host="0.0.0.0", port=port, debug=True)
 
 
 if __name__ == '__main__':
-    client_id = int(sys.argv[1])
-    port = 5001 + client_id
-    app.run(host="0.0.0.0", port=port, debug=True)
+    main()

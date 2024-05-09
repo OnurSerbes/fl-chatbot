@@ -14,7 +14,7 @@ from flwr.server import ServerApp, ServerConfig
 IMG_SIZE = 160
 
 # Load server address and port number from command-line arguments or use default
-server_address = "192.168.1.111"
+server_address = "10.0.25.106"
 port_number = "8080"
 
 
