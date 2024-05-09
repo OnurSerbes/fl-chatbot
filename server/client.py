@@ -2,12 +2,18 @@ import threading
 import numpy as np
 import sys
 import os
+import io
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import keras as ks
 from flwr.client import start_numpy_client, NumPyClient
 from utils import load_partition, read_img, get_labels
 from werkzeug.utils import secure_filename
+from flask import request
+from PIL import Image
+
+
 
 # Load server address and port number from command-line arguments or use default
 server_address = "10.0.25.106"
@@ -22,11 +28,12 @@ image_paths = []
 
 IMG_SIZE = 160
 model = ks.Sequential([
-    ks.layers.Input(shape=(IMG_SIZE, IMG_SIZE)),
+    ks.layers.Input(shape=(IMG_SIZE, IMG_SIZE, 3)),  # Correct: expecting RGB images
     ks.layers.Flatten(),
     ks.layers.Dense(128, activation='relu'),
     ks.layers.Dense(4)
 ])
+
 model.compile(optimizer='adam', loss=ks.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
 
 X_train, X_val, y_train, y_val = load_partition(int(sys.argv[1]))
@@ -40,6 +47,61 @@ labels = get_labels()
 ##################################
 # Encapsulated metods START here #
 ##################################
+
+
+##############################################
+# TESTING AREA # TESTING AREA # TESTING AREA #
+##############################################
+
+# Define a function to preprocess the image and predict its label
+def predict_image(image_bytes):
+    image = Image.open(io.BytesIO(image_bytes))
+    image = image.convert('RGB')  # Ensure the image is in RGB format
+    image = image.resize((IMG_SIZE, IMG_SIZE))  # Resize the image to match the input size of the model
+    image = np.array(image) / 255.0  # Normalize pixel values to [0, 1]
+    image = np.expand_dims(image, axis=0)  # Add batch dimension
+    predictions = model.predict(image)
+    predicted_label_index = np.argmax(predictions)
+    probability = np.max(predictions)
+    predicted_label = labels[predicted_label_index]
+    return predicted_label, probability
+
+
+
+@app.route('/predict-bytes', methods=['POST'])
+def predictBytes():
+    if 'file' not in request.files:
+        return "No file part", 400
+    file = request.files['file']
+    if file.filename == '':
+        return "No selected file", 400
+    if file:
+        image_bytes = file.read()
+        predicted_label, probability = predict_image(image_bytes)
+        return jsonify({
+            "label": predicted_label,
+            "probability": float(probability)
+        })
+
+
+
+
+
+@app.route("/upload", methods=["POST"])
+def upload_file():
+    if "file" not in request.files:
+        return "No file part", 400
+    file = request.files["file"]
+    if file.filename == "":
+        return "No selected file", 400
+    # Save the file to disk or process it as needed
+    file.save("/path/to/save/file")
+    return "File uploaded successfully", 200
+
+
+##############################################
+# TESTING AREA # TESTING AREA # TESTING AREA #
+##############################################
 
 
 def prepare_image(image_path):
@@ -172,7 +234,7 @@ def run_flower():
 def main():
     client_id = int(sys.argv[1])
     port = 5001 + client_id
-    run_flower()
+    #run_flower()
     app.run(host="0.0.0.0", port=port, debug=True)
 
 
