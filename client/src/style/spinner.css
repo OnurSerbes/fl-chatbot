@@ -1,0 +1,18 @@
+
+/* For visual styling of the spinner animation to be shown during loading */
+
+.spinner {
+  border: 24px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #d0e8f2;
+  border-radius: 50%;
+  padding-left: 50px;
+  width: 150px;
+  height: 150px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

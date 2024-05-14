@@ -3,21 +3,37 @@ import numpy as np
 import sys
 import os
 import io
+import socket
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import keras as ks
-from flwr.client import start_numpy_client, NumPyClient
+from flwr.client import start_client, NumPyClient
 from utils import load_partition, read_img, get_labels
 from werkzeug.utils import secure_filename
 from flask import request
 from PIL import Image
 
 
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'  # fallback to localhost
+    finally:
+        s.close()
+    return ip
+
+# Use the function to get the local IP address
+server_address = get_local_ip()
+port_number = "8080"
 
 # Load server address and port number from command-line arguments or use default
-server_address = "10.0.25.106"
-port_number = "8080"
+# Use the function to get the local IP address
+# server_address = "192.168.1.157"
+# port_number = "8080"
 
 
 app = Flask(__name__)
@@ -27,12 +43,15 @@ CORS(app)  # Enable CORS for all routes
 image_paths = []
 
 IMG_SIZE = 160
+# Adjust the input shape to match RGB images
 model = ks.Sequential([
     ks.layers.Input(shape=(IMG_SIZE, IMG_SIZE, 3)),  # Correct: expecting RGB images
     ks.layers.Flatten(),
     ks.layers.Dense(128, activation='relu'),
+    ks.layers.Dense(4, activation='softmax'),  # Add softmax activation function
     ks.layers.Dense(4)
 ])
+
 
 model.compile(optimizer='adam', loss=ks.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
 
@@ -42,16 +61,6 @@ X_train, X_val, y_train, y_val = load_partition(int(sys.argv[1]))
 labels = get_labels()
 
 
-
-
-##################################
-# Encapsulated metods START here #
-##################################
-
-
-##############################################
-# TESTING AREA # TESTING AREA # TESTING AREA #
-##############################################
 
 # Define a function to preprocess the image and predict its label
 def predict_image(image_bytes):
@@ -98,10 +107,6 @@ def upload_file():
     file.save("/path/to/save/file")
     return "File uploaded successfully", 200
 
-
-##############################################
-# TESTING AREA # TESTING AREA # TESTING AREA #
-##############################################
 
 
 def prepare_image(image_path):
@@ -220,10 +225,12 @@ class FederatedClient(NumPyClient):
 
         return loss, len(X_val), {"accuracy": accuracy}
 
-# Start Federated Learning progress
+# Start Federated Learning process
 def run_flower():
     # Configure the client to connect to the server
-    start_numpy_client(server_address=f"{server_address}:{port_number}", client=FederatedClient())
+    client = FederatedClient().to_client()
+    start_client(server_address=f"{server_address}:{port_number}", client=client)
+
 
 
 

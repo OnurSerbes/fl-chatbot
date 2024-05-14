@@ -1,4 +1,9 @@
+
+// IMPORT React
 import React, { useState } from "react";
+
+// IMPORT Style
+import '../style/modal.css'
 
 const Modal = ({ addUser }) => {
   const [nameSurname, setNameSurname] = useState(""); // State variable for name and surname input
