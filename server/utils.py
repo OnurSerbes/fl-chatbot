@@ -17,9 +17,10 @@ def get_labels():
 
 
 def read_img(path):
-    img = cv2.imread(path, 0)
+    img = cv2.imread(path, cv2.IMREAD_COLOR)  # Use cv2.IMREAD_COLOR to load images in RGB mode
     img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
     return img
+
 
 
 def load_training_data(val_size=0.2):
@@ -29,27 +30,47 @@ def load_training_data(val_size=0.2):
     X = []
     y = []
 
-    # Get the images from both the training and testing directories (we will split them ourselves)
     for label in labels:
         trainingLoc = 'Training/' + label
         trainLabelPath = os.path.join(path, trainingLoc)
 
-        # read all the images from the training directory
         for imgFilename in os.listdir(trainLabelPath):
-            X.append(read_img(os.path.join(trainLabelPath, imgFilename)))
+            img = read_img(os.path.join(trainLabelPath, imgFilename))
+            X.append(img)
             y.append(labels.index(label))
 
-    # Convert everything to numpy arrays
     X = np.array(X)
     X = X / 255.0
     y = np.array(y)
 
-    # Shuffle so that all the same labels aren't next to each other
     X, y = shuffle(X, y)
 
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=val_size)
 
     return X_train, X_val, y_train, y_val
+
+
+def load_testing_data():
+    path = './data/'
+    labels = get_labels()
+
+    X_test = []
+    y_test = []
+
+    for label in labels:
+        testingLoc = 'Testing/' + label
+        testLabelPath = os.path.join(path, testingLoc)
+
+        for imgFilename in os.listdir(testLabelPath):
+            img = read_img(os.path.join(testLabelPath, imgFilename))
+            X_test.append(img)
+            y_test.append(labels.index(label))
+
+    X_test = np.array(X_test)
+    X_test = X_test / 255.0
+    y_test = np.array(y_test)
+
+    return X_test, y_test
 
 
 def load_partition(index):
@@ -64,29 +85,6 @@ def load_partition(index):
     )
 
 
-def load_testing_data():
-    path = './data/'
-    labels = get_labels()
-
-    X_test = []
-    y_test = []
-
-    # Get the images from both the training and testing directories (we will split them ourselves)
-    for label in labels:
-        testingLoc = 'Testing/' + label
-        testLabelPath = os.path.join(path, testingLoc)
-
-        # read all the images from the testing directoory 
-        for imgFilename in os.listdir(testLabelPath):
-            X_test.append(read_img(os.path.join(testLabelPath, imgFilename)))
-            y_test.append(labels.index(label))
-
-    # Convert everything to numpy arrays
-    X_test = np.array(X_test)
-    X_test = X_test / 255.0
-    y_test = np.array(y_test)
-
-    return X_test, y_test
 
 
 def load_data_dicom(test_size=0.2):

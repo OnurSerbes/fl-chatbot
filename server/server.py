@@ -11,17 +11,19 @@ from flwr.server.client_proxy import ClientProxy
 from utils import load_testing_data
 from flwr.server import ServerApp, ServerConfig
 
-IMG_SIZE = 160
-
 # Load server address and port number from command-line arguments or use default
-server_address = "10.0.25.106"
+server_address = "192.168.1.157"
 port_number = "8080"
 
 
 # Create model function
+# Adjust the input shape to match RGB images
+IMG_SIZE = 160
+
 def create_model():
     model = ks.Sequential([
-        ks.layers.Flatten(input_shape=(IMG_SIZE, IMG_SIZE)),
+        ks.layers.Input(shape=(IMG_SIZE, IMG_SIZE, 3)),  # Correct: expecting RGB images
+        ks.layers.Flatten(),
         ks.layers.Dense(128, activation='relu'),
         ks.layers.Dense(4)
     ])
