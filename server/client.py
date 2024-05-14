@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import os
 import io
+import socket
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -14,10 +15,25 @@ from flask import request
 from PIL import Image
 
 
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'  # fallback to localhost
+    finally:
+        s.close()
+    return ip
+
+# Use the function to get the local IP address
+server_address = get_local_ip()
+port_number = "8080"
 
 # Load server address and port number from command-line arguments or use default
-server_address = "192.168.1.157"
-port_number = "8080"
+# Use the function to get the local IP address
+# server_address = "192.168.1.157"
+# port_number = "8080"
 
 
 app = Flask(__name__)
@@ -32,6 +48,7 @@ model = ks.Sequential([
     ks.layers.Input(shape=(IMG_SIZE, IMG_SIZE, 3)),  # Correct: expecting RGB images
     ks.layers.Flatten(),
     ks.layers.Dense(128, activation='relu'),
+    ks.layers.Dense(4, activation='softmax'),  # Add softmax activation function
     ks.layers.Dense(4)
 ])
 

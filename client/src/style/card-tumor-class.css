@@ -1,0 +1,60 @@
+
+.card-tumor-class {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 200px;
+  max-width: 35%;
+  text-align: center;
+}
+
+.classification-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.subtext {
+  opacity: 0.8;
+  font-size: 15px;
+  font-weight: bold;
+  padding-block: 2px;
+}
+
+/* TODO REMOVE TRUNCATION IF REQUIRED SO */
+.title {
+  font-size: 16px;
+  margin-top: -5px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.label {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: -10px;
+}
+
+.confidence-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-top: 5px;
+  margin-bottom: -5px;
+}
+
+.confidence-wheel {
+  align-self: center;
+  height: 60px;
+  width: 60px;
+  font-weight: bold;
+}

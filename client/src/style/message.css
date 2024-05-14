@@ -1,0 +1,42 @@
+
+.message-edit-buttons {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-edit-buttons button {
+  width: 150px;
+  height: 50px;
+  border-radius: 10px;
+  margin: 5px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.message-edit-buttons .edit {
+  background-color: #3498db;
+}
+
+.message-edit-buttons .delete {
+  background-color: #e74c3c;
+}
+
+.message-edit-buttons .edit-confirm {
+  background-color: #3498db;
+}
+
+.message-edit-buttons .edit-cancel {
+  background-color: #e67e22;
+}
+
+.message-edit-buttons .delete-confirm {
+  background-color: #e74c3c;
+}
+
+.message-edit-buttons .delete-cancel {
+  background-color: #e67e22;
+}

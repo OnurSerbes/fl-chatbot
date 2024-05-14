@@ -6,15 +6,28 @@ import numpy as np
 from flwr.common import FitRes, Parameters, Scalar
 #from flwr.server import ServerConfig
 from flwr.server.client_proxy import ClientProxy
+import socket
+
 #from flwr.server.strategy import DifferentialPrivacyClientSideFixedClipping
 
 from utils import load_testing_data
 from flwr.server import ServerApp, ServerConfig
 
 # Load server address and port number from command-line arguments or use default
-server_address = "192.168.1.157"
-port_number = "8080"
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'  # fallback to localhost
+    finally:
+        s.close()
+    return ip
 
+# Use the function to get the local IP address
+server_address = get_local_ip()
+port_number = "8080"
 
 # Create model function
 # Adjust the input shape to match RGB images
@@ -25,6 +38,7 @@ def create_model():
         ks.layers.Input(shape=(IMG_SIZE, IMG_SIZE, 3)),  # Correct: expecting RGB images
         ks.layers.Flatten(),
         ks.layers.Dense(128, activation='relu'),
+        ks.layers.Dense(4, activation='softmax'),  # Add softmax activation function
         ks.layers.Dense(4)
     ])
     model.compile(
