@@ -4,7 +4,6 @@ import sys
 import os
 import io
 import socket
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import keras as ks
@@ -13,7 +12,6 @@ from utils import load_partition, read_img, get_labels
 from werkzeug.utils import secure_filename
 from flask import request
 from PIL import Image
-
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -26,15 +24,8 @@ def get_local_ip():
         s.close()
     return ip
 
-# Use the function to get the local IP address
 server_address = get_local_ip()
 port_number = "8080"
-
-# Load server address and port number from command-line arguments or use default
-# Use the function to get the local IP address
-# server_address = "192.168.1.157"
-# port_number = "8080"
-
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -43,7 +34,6 @@ CORS(app)  # Enable CORS for all routes
 image_paths = []
 
 IMG_SIZE = 160
-# Adjust the input shape to match RGB images
 model = ks.Sequential([
     ks.layers.Input(shape=(IMG_SIZE, IMG_SIZE, 3)),  # Correct: expecting RGB images
     ks.layers.Flatten(),
@@ -52,15 +42,15 @@ model = ks.Sequential([
     ks.layers.Dense(4)
 ])
 
-
 model.compile(optimizer='adam', loss=ks.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
 
-X_train, X_val, y_train, y_val = load_partition(int(sys.argv[1]))
+# Hardcode client_id for simplicity
+client_id = 0
+
+X_train, X_val, y_train, y_val = load_partition(client_id)
 
 # Define the labels
 labels = get_labels()
-
-
 
 # Define a function to preprocess the image and predict its label
 def predict_image(image_bytes):
@@ -74,8 +64,6 @@ def predict_image(image_bytes):
     probability = np.max(predictions)
     predicted_label = labels[predicted_label_index]
     return predicted_label, probability
-
-
 
 @app.route('/predict-bytes', methods=['POST'])
 def predictBytes():
@@ -92,10 +80,6 @@ def predictBytes():
             "probability": float(probability)
         })
 
-
-
-
-
 @app.route("/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
@@ -107,15 +91,12 @@ def upload_file():
     file.save("/path/to/save/file")
     return "File uploaded successfully", 200
 
-
-
 def prepare_image(image_path):
     """Converts the uploaded image to the format expected by the model."""
     img = read_img(image_path)
     img = np.array(img) / 255.0
     img = np.expand_dims(img, axis=0)
     return img
-
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -147,10 +128,6 @@ def predict():
             "probability": float(probability)
         })
 
-
-
-
-# Route to receive Blob URL from client
 @app.route("/receive-blob-url", methods=["POST"])
 def receive_blob_url():
     data = request.json
@@ -161,9 +138,6 @@ def receive_blob_url():
     else:
         return jsonify({"success": False, "error": "Blob URL not provided"}), 400
 
-
-
-# Route to retrieve and log stored image paths
 @app.route("/get-image-paths")
 def get_image_paths():
     print("Stored Image Paths:")
@@ -171,28 +145,14 @@ def get_image_paths():
         print(path)
     return jsonify({"imagePaths": image_paths}), 200
 
-# Metod to retrun client id
 @app.route('/get-client-id', methods=['GET'])
 def get_client_id():
-    client_id = int(sys.argv[1])
     return jsonify({"client_id": client_id}), 200
 
-
-# Flask route to start federated learning
 @app.route("/start-fl", methods=['GET'])
 def start_flower():
-    # Start Federated Learning process
     run_flower()
-    
-    # Return success message
     return jsonify({"message": "Federated Learning process started successfully"}), 200
-
-
-
-
-###############################
-# Federated Client START Here #
-###############################
 
 class FederatedClient(NumPyClient):
     def get_parameters(self, config):
@@ -215,35 +175,17 @@ class FederatedClient(NumPyClient):
         model.set_weights(parameters)
         loss, accuracy = model.evaluate(X_val, y_val)
         print("****** CLIENT ACCURACY: ", accuracy, " ******")
-        # Predict labels for validation data
         y_pred = np.argmax(model.predict(X_val), axis=1)
-
-        # Calculate the number of correct guesses for each label
         correct_guesses = [np.sum((y_pred == i) & (y_val == i)) for i in range(4)]
-
         print("Correct Guesses for Each Label:", correct_guesses)
-
         return loss, len(X_val), {"accuracy": accuracy}
 
-# Start Federated Learning process
 def run_flower():
-    # Configure the client to connect to the server
     client = FederatedClient().to_client()
     start_client(server_address=f"{server_address}:{port_number}", client=client)
 
-
-
-
-############################
-
-
-# Main Metod
 def main():
-    client_id = int(sys.argv[1])
-    port = 5001 + client_id
-    #run_flower()
-    app.run(host="0.0.0.0", port=port, debug=True)
-
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
 if __name__ == '__main__':
     main()
