@@ -17,8 +17,7 @@ const InputContainer = ({ state, handler }) => {
       split[1] = `.${split[1]}`;
       setFileDetails(split);
     }
-    console.log(`file details:`);
-    console.log(fileDetails);
+    console.log('fileDetails:', fileDetails ? fileDetails : 'none');
   }, [state.imageFile]);
 
   return (
@@ -28,8 +27,11 @@ const InputContainer = ({ state, handler }) => {
       <form onSubmit={handler.handleSubmit}>
         {/* FORM CONTAINER */}
         <div className="form-container">
+          {/* TEXT SUBPART */}
           <div className="text-part">
+            {/* INPUT CONTAINER */}
             <div className="text-input">
+              {/* INPUT COMPONENT */}
               <input
                 className="input-field"
                 type="text"
@@ -40,7 +42,7 @@ const InputContainer = ({ state, handler }) => {
               />
             </div>
           </div>
-          {/* SEPARATION */}
+          {/* IMAGE SUBPART */}
           <div className="image-part">
             {state.imageFile && (
               <div className="image-label">
@@ -49,6 +51,7 @@ const InputContainer = ({ state, handler }) => {
                 <p className="file-size">{`(${(state.imageFile.size / 1024).toFixed(2)} KB)`}</p>
               </div>
             )}
+            {/* FILENAME DISPLAYER */}
             <input
               ref={state.fileInputRef}
               type="file"
@@ -56,6 +59,7 @@ const InputContainer = ({ state, handler }) => {
               onChange={handler.handleFileChange}
               style={{ display: "none" }} // Hide the file input
             />
+            {/* IMAGE BUTTONS CONTAINER */}
             <div className="image-buttons">
               {state.imageFile ? (
                 // Cancel Button
@@ -78,6 +82,7 @@ const InputContainer = ({ state, handler }) => {
                   Upload Image
                 </button>
               )}
+              {/* SEND BUTTON */}
               {state.imageFile && (
                 <button
                   type="submit"

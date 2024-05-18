@@ -18,7 +18,7 @@ import { sendImageDataToServer } from "./utils";
 const App = () => {
 
   // VARIABLE Header title
-  const headerTitle = "Brain Tumor Classifier"; // Title for the header
+  const headerTitle = "Brain Tumor Classifier";
 
   // TEST DUMMY Labels
   const dummyLabel = () => {
@@ -27,14 +27,13 @@ const App = () => {
     return dummyLabels[index];
    }
 
-   // TEST DUMMY Confidence
+  // TEST DUMMY Confidence
   const dummyConfidence = () => { return 60 + ((Math.random() * 100) * 0.4) };
 
   // STATES utilized within App.js
   const [messages, setMessages] = useState([]);
   const [userLogged, setUserLogged] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);
 
   // STATES utilized within InputContainer
@@ -43,6 +42,7 @@ const App = () => {
   const [blobUrl, setBlobUrl] = useState("");
   const fileInputRef = useRef(null);
 
+  // OBJECT states to be passed down to child components
   const statesInput =
   {
     inputText, setInputText,
@@ -60,19 +60,19 @@ const App = () => {
   const uploadImage = (imageFile) => {
     console.log("call: uploadImage"); // TESTLOG
     if (imageFile) {
-      console.log("imageFile exists"); // TESTLOG
-      console.log(`imageFile: ${imageFile}`); // TESTLOG
+      console.log('imageFile: ', imageFile ? imageFile : 'none'); // TESTLOG
       const newUploadMessage = {
         sender: "user",
         imageFile: imageFile,
         temp: true,
       };
+      console.log("|ADD MSG|", newUploadMessage); // TESTLOG
       setMessages((prevMessages) => [...prevMessages, newUploadMessage]);
-      console.log('messages:'); // TESTLOG
       console.log(messages); // TESTLOG
     }
   }
 
+  // FUNCTION cancel image
   const cancelImage = async () => {
     console.log("call: cancelImage"); // TESTLOG
     setMessages((prevMessages) => prevMessages.filter(message => !message.temp))
@@ -92,11 +92,8 @@ const sendMessage = async (text, imageFile) => {
   // CONDITION if an image was uploaded
   if (imageFile) {
 
-    console.log(busy); // TESTLOG
-
     // TESTLOG imageFile
-    console.log(`imageFile:`)
-    console.log(imageFile);
+    console.log('imageFile: ', imageFile);
 
     // LET name of current image to be displayed later
     let currImageName = '';
@@ -109,28 +106,23 @@ const sendMessage = async (text, imageFile) => {
     const delayUpload = Math.floor(Math.random() * 1000) + 2000;
 
     // FLAG for image uploading interval
-    console.log("set: loading = true"); // TESTLOG
-    setLoading(true); // intended to remain true during upload interval
 
     // DATA of image to be sent to the server
     const formData = new FormData();
     formData.append("file", imageFile);
-    console.log("formData:"); // TESTLOG
     console.log(formData); // TESTLOG
 
     // TESTLOG imageFile name
-    console.log(`imageFile name: ${imageFile.name}`);
+    console.log('imageFile.name', imageFile.name); // TESTLOG
 
     // SEND image data via 'sendImageDataToServer'
     const imageDataResponse = await sendImageDataToServer(formData);
 
     // TESTLOG imageDataResponse
-    console.log(`imageDataRespomse: ${imageDataResponse}`);
+    console.log('imageDataResponse: ', imageDataResponse); // TESTLOG
 
     // CONDITION if response received successfull
     if (true) { // TODO: put imageDataResponse back here
-
-      console.log(busy); // TESTLOG
 
       // TEST DUMMY Response
       const fakeDataResponse = {};
@@ -145,13 +137,14 @@ const sendMessage = async (text, imageFile) => {
         sender: "user",
         imageFile: imageFile,
       };
+      console.log("|ADD MSG|", newUserMessage); // TESTLOG
 
       // TESTLOG new user message
-      console.log("newUserMessage");
-      console.log(newUserMessage);
+      console.log('newUserMessage: ', newUserMessage);
 
       // PUSH new user message to history
       setMessages((prevMessages) => [...prevMessages, newUserMessage]);
+      console.log("|ADD MSG|", newUserMessage); // TESTLOG
 
       // SAVE image file name for later display
       currImageName = newUserMessage.imageFile.name;
@@ -159,9 +152,6 @@ const sendMessage = async (text, imageFile) => {
       // COLLECT label and confidence
       const resultLabel = finalResponse.label;
       const resultConfidence = finalResponse.probability.toFixed(2);
-      /*
-      const predictionText = `Predicted: ${imageDataResponse.label}, Probability: ${imageDataResponse.probability.toFixed(2)}%`;
-      */
 
       // CREATE temporary waiting message (animated storifier)
       const newStorifierMessage = {
@@ -169,14 +159,13 @@ const sendMessage = async (text, imageFile) => {
         temp: true,
         durs: dummyAnalysisStageDelays,
       };
+      console.log("|ADD MSG|", newStorifierMessage); // TESTLOG
       setMessages((prevMessages) => [...prevMessages, newStorifierMessage]);
 
       setTimeout(() => {
 
-        console.log(busy); // TESTLOG
-
         // TESTLOG temporary message
-        console.log(newStorifierMessage);
+        console.log(newStorifierMessage); // TESTLOG
 
         // CREATE bot response message
         const newBotMessage = {
@@ -185,24 +174,19 @@ const sendMessage = async (text, imageFile) => {
           confidence: resultConfidence,
           sender: "bot",
         };
+        console.log("|ADD MSG|", newBotMessage); // TESTLOG
 
         // TESTLOG new bot message
-        console.log(newBotMessage);
+        console.log(newBotMessage); // TESTLOG
         
         // POP temporary message then PUSH new bot message to history
+        console.log("|RMV MSG| temp"); // TESTLOG
         setMessages((prevMessages) => prevMessages.filter(message => !message.temp).concat(newBotMessage));
-        
-        // UNFLAG loading state after process is done
-        setLoading(false);
 
         // TESTLOG current message history
-        console.log(messages);
-
-        console.log(busy); // TESTLOG
+        console.log('Messages: ', messages);
 
         setBusy(false);
-
-        console.log(busy); // TESTLOG
 
       }, dummyAnalysisTotalDelay)
 
@@ -216,6 +200,7 @@ const sendMessage = async (text, imageFile) => {
 
   // FUNCTION Add user with applied proper user name input validation loop
   const addUser = (nameSurname) => {
+    console.log("---ADDING USER---"); // TESTLOG
     console.log("call: addUser"); // TESTLOG
     // GENERATE random ID
     const userId = Math.floor(Math.random() * 1000);
@@ -232,21 +217,26 @@ const sendMessage = async (text, imageFile) => {
 
   // FUNCTION Handle image text editing
   const handleEditMessage = (index, editedText) => {
+    console.log("---EDITING MESSAGE---"); // TESTLOG
     console.log("call: handleEditMessage"); // TESTLOG
     // Update the messages array with the edited text
     const updatedMessages = [...messages];
     updatedMessages[index].text = editedText;
     setMessages(updatedMessages);
+    console.log(`|UPDATED| message {id: ${index}} `, updatedMessages[index]); // TESTLOG
   };
 
   // FUNCTION Handle image deletion
   const handleDeleteMessage = (index) => {
+    console.log("---DELETED MESSAGE---"); // TESTLOG
     console.log("call: handleDeleteMessage"); // TESTLOG
     const newMessages = [...messages];
     // Remove user message
+    console.log(`|DELETED| message {id: ${index}}`, ); // TESTLOG
     newMessages.splice(index, 1);
     // Check if there's a corresponding bot response to delete
     if (newMessages[index]?.sender === "bot") {
+      console.log(`|DELETED| message {id: ${index}}`, ); // TESTLOG
       newMessages.splice(index, 1); // Remove the bot response
     }
     setMessages(newMessages);
@@ -254,19 +244,20 @@ const sendMessage = async (text, imageFile) => {
 
   // SET user login status to show or hide modal
   useEffect(() => {
-    console.log("effect: null, show login modal"); // TESTLOG
     setUserLogged(false);
+    console.log("---SHOW LOGIN---"); // TESTLOG
+    console.log("effect: null, show login modal"); // TESTLOG
   }, []); // Empty dependency array to only run once when component mounts
 
   const handlersInput = 
   {
 
     handleChange: (e) => {
-      console.log("call: handleChange"); // TESTLOG
       setInputText(e.target.value);
     },
 
     handleFileChange: (e) => {
+      console.log("---CHANGED FILE---")
       console.log("call: handleFileChange"); // TESTLOG
       const file = e.target.files[0];
       const imagePath = URL.createObjectURL(file); // Get the path of the uploaded image
@@ -277,12 +268,14 @@ const sendMessage = async (text, imageFile) => {
     },
   
     handleUploadImage: () => {
+      console.log("---SELECTING IMAGE---")
       console.log("call: handleUploadImage"); // TESTLOG
       fileInputRef.current.value = null; // Clear the file input value
       fileInputRef.current.click(); // Trigger click event on file input
     },
   
     handleCancelImage: () => {
+      console.log("---CANCELLED IMAGE---")
       console.log("call: handleCancelImage"); // TESTLOG
       setInputText(""); // Clear the input text
       setImageFile(null); // Clear the selected image file
@@ -290,16 +283,15 @@ const sendMessage = async (text, imageFile) => {
     },
   
     handleSubmit: async (e) => {
+      console.log("---SUBMITTING IMAGE---")
       console.log("call: handleSubmit"); // TESTLOG
       e.preventDefault();
       if (inputText.trim() !== "" || imageFile !== null) {
-        setLoading(true); // Set loading state to true during submission
         // call: sendMessage with input text and image URL
         await sendMessage(inputText, imageFile, blobUrl);
         setInputText("");
         setImageFile(null);
         setBlobUrl(""); // Clear the Blob URL after sending the message
-        setLoading(false); // Set loading state to false after submission
       }
     },
 

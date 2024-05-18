@@ -9,7 +9,6 @@ import CardStorifier from "./CardStorifier";
 import '../style/message.css'
 
 const Message = ({ message, onEdit, onDelete, busy }) => {
-  console.log(message); //TESTLOG
   const { sender, imageFile, text, label, confidence, temp, durs, onLoad } = message || {};
   const isUser = sender === "user";
 
