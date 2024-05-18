@@ -8,7 +8,7 @@ import Message from "./Message";
 // IMPORT Style
 import '../style/chat-container.css'
 
-const ChatContainer = ({ messages, onEditMessage, onDeleteMessage }) => {
+const ChatContainer = ({ messages, onEditMessage, onDeleteMessage, state }) => {
   const chatContainerRef = useRef(null);
 
   // Scroll to the bottom of the chat container when new messages are added
@@ -25,6 +25,7 @@ const ChatContainer = ({ messages, onEditMessage, onDeleteMessage }) => {
           message={message}
           onEdit={(editedText) => onEditMessage(index, editedText)}
           onDelete={() => onDeleteMessage(index)}
+          busy={state.busy}
         />
       ))}
     </div>

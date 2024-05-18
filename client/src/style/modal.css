@@ -13,13 +13,9 @@
 
 .modal-content {
   background-color: #fff;
-  padding: 20px;
+  padding: 25px;
   border-radius: 10px;
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
-}
-
-.modal-content h2 {
-  margin-bottom: 20px;
 }
 
 .modal-content form {
@@ -27,18 +23,21 @@
   flex-direction: column;
 }
 
-.modal-content label {
+.modal-content .label {
+  font-size: 22px;
   margin-bottom: 10px;
 }
 
 .modal-content input[type="text"] {
-  padding: 10px;
+  font-size: 16px;
+  padding: 15px 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .modal-content button {
+  font-size: 18px;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -47,8 +46,16 @@
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
+  margin-top: 8px;
+  margin-bottom: -5px;
 }
 
 .modal-content button:hover {
   background-color: #357bd8;
+}
+
+.modal-content .validation-message {
+  color: orange;
+  font-size: 0.8em;
+  text-align: center;
 }

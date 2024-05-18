@@ -17,6 +17,15 @@
   cursor: pointer;
 }
 
+@media (max-width: 480px) {
+  .message-edit-buttons {
+    min-width: 50%;
+  }
+  .message-edit-buttons button {
+    width: 100%;
+  }
+}
+
 .message-edit-buttons .edit {
   background-color: #3498db;
 }
