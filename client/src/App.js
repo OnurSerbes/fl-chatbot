@@ -207,7 +207,13 @@ const App = () => {
 
           // TO FINALIZE print FL ready message
           if (isFirst) {
-            printMessage('FL calibration complete!', 'You can now start uploading MRI scans for FL supported analysis');
+            printMessage(
+              {
+                sender: 'system',
+                label: 'FL calibration complete!',
+                text: 'You can now start uploading MRI scans for FL supported analysis',
+              }
+            );
             setIsFirst(false);
           }
 
