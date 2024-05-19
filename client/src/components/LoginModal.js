@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 // IMPORT Style
 import '../style/modal.css'
 
-const Modal = ({ addUser }) => {
+const Modal = ({ state, addUser }) => {
 
   // Validate the input name
-  const nameRegex = /^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/;
+  const nameRegex = /^[a-zA-Z]+\.?(?:\s[a-zA-Z]+\.?)+$/;
 
   const [nameSurname, setNameSurname] = useState(""); // State variable for name and surname input
   const [nameValid, setNameValid] = useState(true);
@@ -25,6 +25,8 @@ const Modal = ({ addUser }) => {
       // Call the addUser function passed from the parent component
       addUser(nameSurname);
     }
+    // REQUEST FL
+    state.setReqFL(true);
   };
 
   return (

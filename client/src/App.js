@@ -16,11 +16,12 @@ import { sendImageDataToServer } from "./utils";
 // COMPONENT App.js
 const App = () => {
   // VARIABLE Header title
+  // TODO COULD MIGRATE THIS IMPLEMENTATION
   const headerTitle = "Brain Tumor Classifier";
 
   // TEST DUMMY Labels
   const dummyLabel = () => {
-    const dummyLabels = ["Type 1", "Type 2", "Type 3", "Type 4", "None"];
+    const dummyLabels = ["Menengioma", "Glioma", "Pituatuary", "None"]
     const index = Math.floor(Math.random() * 5);
     return dummyLabels[index];
   };
@@ -35,6 +36,10 @@ const App = () => {
   const [userLogged, setUserLogged] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [busy, setBusy] = useState(false);
+  
+  // TEST STATES SYSTEM MESSAGE PROMPTING
+  const [reqFL, setReqFL] = useState(false);
+  const [readyFL, setReadyFL] = useState(false);
 
   // STATES utilized within InputContainer
   const [inputText, setInputText] = useState("");
@@ -43,18 +48,26 @@ const App = () => {
   const fileInputRef = useRef(null);
 
   // OBJECT states to be passed down to child components
-  const statesInput = {
-    inputText,
-    setInputText,
-    imageFile,
-    setImageFile,
-    blobUrl,
-    setBlobUrl,
-    busy,
-    setBusy,
-    fileInputRef,
-  };
+  const statesInput =
+  {
+    inputText, setInputText,
+    imageFile, setImageFile,
+    blobUrl, setBlobUrl,
+    busy, setBusy,
+    fileInputRef
+  }
 
+  const statesFL = 
+  {
+    reqFL, setReqFL,
+    readyFL, setReadyFL,
+  }
+
+  /**
+   * TODO: tried to implement post-upload image display but got:
+   * 'Failed to execute 'CreateObjectURL' on 'URL':
+   * Overload Resolution Failed
+   */ 
   const uploadImage = (imageFile) => {
     console.log("call: uploadImage"); // TESTLOG
     if (imageFile) {
@@ -70,13 +83,17 @@ const App = () => {
     }
   };
 
-  // FUNCTION cancel image
-  const cancelImage = async () => {
-    console.log("call: cancelImage"); // TESTLOG
-    setMessages((prevMessages) =>
-      prevMessages.filter((message) => !message.temp)
-    );
-  };
+// FUNCTION cancel image
+const cancelImage = async () => {
+  console.log("call: cancelImage"); // TESTLOG
+  setMessages((prevMessages) => prevMessages.filter(message => !message.temp))
+}
+
+  // TODO REMOVE METHOD IF OBSOLETE LATER
+  const printSystemMessage = (label, text) => {
+    const sysMsg ={ sender: 'system', label: label, text: text }
+    setMessages((prevMessages) => [...prevMessages, sysMsg]);
+  }
 
   /**
    * FUNCTION Send Message
@@ -91,20 +108,16 @@ const App = () => {
 
     // CONDITION if an image was uploaded
     if (imageFile) {
-      console.log("imageFile: ", imageFile);
+
+      // TESTLOG imageFile
+      console.log('imageFile: ', imageFile);
 
       // LET name of current image to be displayed later
-      let currImageName = "";
+      let currImageName = '';
 
       // DUMMY storifier delay durations
-      const dummyAnalysisStageDelays = Array.from(
-        { length: 5 },
-        () => Math.floor(Math.random() * 2000) + 1000
-      );
-      const dummyAnalysisTotalDelay = dummyAnalysisStageDelays.reduce(
-        (acc, curr) => acc + curr,
-        0
-      );
+      const dummyAnalysisStageDelays = Array.from({ length: 5 }, () => Math.floor(Math.random() * 2000) + 1000);
+      const dummyAnalysisTotalDelay = dummyAnalysisStageDelays.reduce((acc, curr) => acc + curr, 0);
 
       // DUMMY upload delay
       const delayUpload = Math.floor(Math.random() * 1000) + 2000;
@@ -117,25 +130,23 @@ const App = () => {
       console.log(formData); // TESTLOG
 
       // TESTLOG imageFile name
-      console.log("imageFile.name", imageFile.name); // TESTLOG
+      console.log('imageFile.name', imageFile.name); // TESTLOG
 
       // SEND image data via 'sendImageDataToServer'
       const imageDataResponse = await sendImageDataToServer(formData);
 
       // TESTLOG imageDataResponse
-      console.log("imageDataResponse: ", imageDataResponse); // TESTLOG
+      console.log('imageDataResponse: ', imageDataResponse); // TESTLOG
 
-      // CONDITION if response received successful
-      if (imageDataResponse) {
+      // CONDITION if response received successfull
+      if (true) { // TODO: put imageDataResponse back here
+
         // TEST DUMMY Response
-        const fakeDataResponse = {
-          label: dummyLabel(),
-          probability: dummyConfidence(),
-        };
+        const fakeDataResponse = {};
+          fakeDataResponse.label = dummyLabel();
+          fakeDataResponse.probability = dummyConfidence();
 
-        const finalResponse = imageDataResponse
-          ? imageDataResponse
-          : fakeDataResponse;
+        const finalResponse = ( imageDataResponse ? imageDataResponse : fakeDataResponse )
 
         // CREATE user message instance
         const newUserMessage = {
@@ -146,7 +157,7 @@ const App = () => {
         console.log("|ADD MSG|", newUserMessage); // TESTLOG
 
         // TESTLOG new user message
-        console.log("newUserMessage: ", newUserMessage);
+        console.log('newUserMessage: ', newUserMessage);
 
         // PUSH new user message to history
         setMessages((prevMessages) => [...prevMessages, newUserMessage]);
@@ -157,7 +168,7 @@ const App = () => {
 
         // COLLECT label and confidence
         const resultLabel = finalResponse.label;
-        const resultConfidence = (finalResponse.probability * 100).toFixed(2);
+        const resultConfidence = finalResponse.probability.toFixed(2);
 
         // CREATE temporary waiting message (animated storifier)
         const newStorifierMessage = {
@@ -169,6 +180,7 @@ const App = () => {
         setMessages((prevMessages) => [...prevMessages, newStorifierMessage]);
 
         setTimeout(() => {
+
           // TESTLOG temporary message
           console.log(newStorifierMessage); // TESTLOG
 
@@ -183,24 +195,24 @@ const App = () => {
 
           // TESTLOG new bot message
           console.log(newBotMessage); // TESTLOG
-
+          
           // POP temporary message then PUSH new bot message to history
           console.log("|RMV MSG| temp"); // TESTLOG
-          setMessages((prevMessages) =>
-            prevMessages
-              .filter((message) => !message.temp)
-              .concat(newBotMessage)
-          );
+          setMessages((prevMessages) => prevMessages.filter(message => !message.temp).concat(newBotMessage));
 
           // TESTLOG current message history
-          console.log("Messages: ", messages);
+          console.log('Messages: ', messages);
 
           setBusy(false);
-        }, dummyAnalysisTotalDelay);
+
+        }, dummyAnalysisTotalDelay)
+
       } else {
         setBusy(false);
       }
+
     }
+
   };
 
   // FUNCTION Add user with applied proper user name input validation loop
@@ -246,14 +258,9 @@ const App = () => {
     setMessages(newMessages);
   };
 
-  // SET user login status to show or hide modal
-  useEffect(() => {
-    setUserLogged(false);
-    console.log("---SHOW LOGIN---"); // TESTLOG
-    console.log("effect: null, show login modal"); // TESTLOG
-  }, []); // Empty dependency array to only run once when component mounts
+  const handlersInput = 
+  {
 
-  const handlersInput = {
     handleChange: (e) => {
       setInputText(e.target.value);
     },
@@ -296,7 +303,26 @@ const App = () => {
         setBlobUrl(""); // Clear the Blob URL after sending the message
       }
     },
-  };
+  }
+
+  // DESCRIBE INITIAL SYSTEM BEHAVIOUR BELOW
+
+  // SET user login status to show or hide modal
+  useEffect(() => {
+    setUserLogged(false);
+    console.log("---SHOW LOGIN---"); // TESTLOG
+    console.log("effect: null, show login modal"); // TESTLOG
+  }, []); // Empty dependency array to only run once when component mounts
+
+  useEffect(() => {
+    if (userLogged) {
+      console.log('---SYSTEM REQUEST INITIAL SUBMIT---')
+      console.log(`reqFL: ${reqFL}`)
+      if (reqFL) {
+        printSystemMessage('gfdgfd', 'fsdfsdgd');
+      }
+    }
+  }, [reqFL])
 
   // RENDER App.js
   return (
@@ -308,8 +334,14 @@ const App = () => {
         onEditMessage={handleEditMessage}
         onDeleteMessage={handleDeleteMessage}
       />
-      <InputContainer state={statesInput} handler={handlersInput} />
-      {!userLogged && <LoginModal addUser={addUser} />}
+      <InputContainer
+        state={statesInput}
+        handler={handlersInput}
+      />
+      {!userLogged && <LoginModal
+      state={statesFL}
+      addUser={addUser}
+      />}
     </div>
   );
 };

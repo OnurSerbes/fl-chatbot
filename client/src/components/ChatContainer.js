@@ -8,7 +8,8 @@ import Message from "./Message";
 // IMPORT Style
 import '../style/chat-container.css'
 
-const ChatContainer = ({ messages, onEditMessage, onDeleteMessage, state }) => {
+// TODO IMPLEMENT HISTORY PARAM FOR INTAKING PREVIOUS MESSAGE HISTORY
+const ChatContainer = ({ messages, onEditMessage, onDeleteMessage, state, history }) => {
   const chatContainerRef = useRef(null);
 
   // Scroll to the bottom of the chat container when new messages are added

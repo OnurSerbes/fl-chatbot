@@ -1,9 +1,10 @@
 // IMPORT React
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // IMPORT Component
 import CardTumorClass from "./CardTumorClass";
 import CardStorifier from "./CardStorifier";
+import CardSysinfo from "./CardSysinfo";
 
 // IMPORT Style
 import '../style/message.css'
@@ -11,6 +12,8 @@ import '../style/message.css'
 const Message = ({ message, onEdit, onDelete, busy }) => {
   const { sender, imageFile, text, label, confidence, temp, durs, onLoad } = message || {};
   const isUser = sender === "user";
+  const isBot = sender === "bot"; // TODO INTEGRATE LATER
+  const isSystem = sender === "system";
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -51,9 +54,16 @@ const Message = ({ message, onEdit, onDelete, busy }) => {
     setIsDeleting(false); // Reset deleting state
   };
 
+  // TODO REMOVE TEST
+  useEffect(() => {
+    console.log('---PRINT MESSAGE---')
+    console.log('Message:', message)
+    console.log(`isUser: ${isUser} isBot: ${isBot} isSystem: ${isSystem}`)
+  }, [])
+
   return (
     <div>
-      {isUser ? (
+      {isUser ? ( /* USER MESSAGE */
         <div className="message user">
           { !temp && (
             <div className="info-part">
@@ -87,7 +97,9 @@ const Message = ({ message, onEdit, onDelete, busy }) => {
               ) : (
                 <div className="message-info">
                   <div className="filename">{message.imageFile.name}</div>
-                  <div><p>{text && text}</p></div>
+                  <div className ="infotext">
+                    <p>{text && text}</p>
+                  </div>
                 </div>
               )}
             </div>
@@ -96,13 +108,22 @@ const Message = ({ message, onEdit, onDelete, busy }) => {
             <img className="message-image" src={URL.createObjectURL(imageFile)} alt="Uploaded" onLoad={onLoad} />
           )}
         </div>
-      ) : (
+      ) : isBot ? ( /* BOT MESSAGE */
         <div className="message bot">
           {temp ? (
             <CardStorifier durs={durs} />
           ) : (
             <CardTumorClass text={text} label={label} confidence={confidence} />
           )}
+        </div>
+      ) : isSystem && ( /* SYSTEM MESSAGE */
+        <div className="message sys">
+          {/* TODO: PROPER STYLING OF SYSTEM MESSAGE */}
+          {'SYSTEM MESSAGE WILL BE PRINTED HERE'}
+          <CardSysinfo
+            label={label}
+            text={text}
+          />
         </div>
       )}
     </div>

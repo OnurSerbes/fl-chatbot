@@ -11,8 +11,12 @@
   align-items: center;
 }
 
+.modal .label {
+  color: #ddd;
+}
+
 .modal-content {
-  background-color: #fff;
+  background-color: #111;
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
@@ -31,7 +35,9 @@
 .modal-content input[type="text"] {
   font-size: 16px;
   padding: 15px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #777;
+  color: #eee;
+  background-color: #222;
   border-radius: 5px;
   margin-bottom: 5px;
 }
@@ -42,7 +48,7 @@
   border: none;
   border-radius: 5px;
   background-color: #4a90e2;
-  color: #fff;
+  color: #eee;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;

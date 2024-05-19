@@ -814,11 +814,11 @@ myFlowerExperiment | INFO flwr 2024-05-17 22:59:49,919 | app.py:150 | Starting F
 myFlowerExperiment | INFO flwr 2024-05-17 22:59:49,942 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
 myFlowerExperiment | INFO flwr 2024-05-17 22:59:49,942 | server.py:92 | [INIT]
 myFlowerExperiment | INFO flwr 2024-05-17 22:59:49,943 | server.py:279 | Requesting initial parameters from one random client
-myFlowerExperiment | INFO flwr 2024-05-18 20:33:00,900 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
-myFlowerExperiment | INFO flwr 2024-05-18 20:33:00,925 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
-myFlowerExperiment | INFO flwr 2024-05-18 20:33:00,926 | server.py:92 | [INIT]
-myFlowerExperiment | INFO flwr 2024-05-18 20:33:00,926 | server.py:279 | Requesting initial parameters from one random client
-myFlowerExperiment | INFO flwr 2024-05-18 20:39:28,461 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
-myFlowerExperiment | INFO flwr 2024-05-18 20:39:28,484 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
-myFlowerExperiment | INFO flwr 2024-05-18 20:39:28,485 | server.py:92 | [INIT]
-myFlowerExperiment | INFO flwr 2024-05-18 20:39:28,485 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-18 05:07:58,204 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
+myFlowerExperiment | INFO flwr 2024-05-18 05:07:58,244 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
+myFlowerExperiment | INFO flwr 2024-05-18 05:07:58,245 | server.py:92 | [INIT]
+myFlowerExperiment | INFO flwr 2024-05-18 05:07:58,245 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 16:54:40,914 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
+myFlowerExperiment | INFO flwr 2024-05-19 16:54:40,951 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
+myFlowerExperiment | INFO flwr 2024-05-19 16:54:40,952 | server.py:92 | [INIT]
+myFlowerExperiment | INFO flwr 2024-05-19 16:54:40,952 | server.py:279 | Requesting initial parameters from one random client
