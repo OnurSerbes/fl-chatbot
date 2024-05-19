@@ -1,29 +1,40 @@
 /* input-container.css */
 
 .input-container {
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
   height: var(--input-container-height);
   padding: 8px;
-  background-color: #f0f0f0;
+  background-color: #333;
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
 }
 
+.input-container form {
+  height: 100%;
+}
+
 .form-container {
+  flex: 1;
   display: flex;
   flex-direction: row;
+  height: 100%;
 }
 
 .form-container .image-part {
   display: flex;
-  flex: 0.33;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  flex: 0.4;
+  height: 100%;
+  max-width: 40%;
 }
 .form-container .image-part > * {
-  width: 100%;
+  width: 95%;
 }
 
 .form-container .text-part {
@@ -31,77 +42,141 @@
   flex: 1;
 }
 
-.image-label, .text-input {
+.text-input {
   flex: 1;
   margin: 6px;
   border: none;
   border-radius: 15px;
-  background-color: #fff;
+  background-color: #222;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   outline: none;
   padding: max(0.5vw, 1.25vh);
 }
 
 .image-label {
-  padding: max(0.35vw, 1vh);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  border: none;
+  border-radius: 5px;
+  background-color: #282828;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 0.95em;
+  outline: none;
+  padding: max(0.2vw, 0.8vh);
+  font-size: 16px;
+}
+
+.image-label > * {
+  padding-inline: 2px;
+  color: #ddd;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.image-label .image-name {
+  flex: 1;
+  text-align: end;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.image.label .file-type {
+
+}
+
+.image-label .file-size {
+
 }
 
 .input-field {
   font-size: max(0.8em, min(1vw, 2vh));
+  color: #ddd;
+  font-size: clamp(18px, 3.5vw, 24px);
   width: 100%;
-  height: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  border-radius: 9px;
+  padding-left: 10px;
   vertical-align: text-top;
   border: none;
   outline: none;
   background-color: transparent;
   overflow-y: auto; /* Enable vertical scrolling when content overflows */
+  overflow-x: hidden;
   white-space: pre-wrap; /* Allow text to wrap */
 }
 
+.input-field::placeholder {
+  color: #aaa;
+  font-size: 16px;
+}
+
 .image-buttons {
-  margin-inline: 8px;
+  width: 90%;
   display: flex;
-  flex: 0.5;
+  flex-direction: row;
+  height: 80%;
+  margin: 6px;
+  display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 
 .image-buttons button {
   min-height: 35px;
-  height: 40px;
-  min-width: 60px;
-  flex: 1;
+  font-size: 24px;
+  padding-inline: 8px;
+  height: 100%;
   border: none;
   font-weight: bold;
   border-radius: 15px;
   cursor: pointer;
+  color: #ddd;
   transition: filter 0.3s ease;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.image-buttons button:hover {
-  filter: brightness(1.5);
-}
-
 .image-buttons button:disabled,
 .input-field:disabled {
-  filter: brightness(0.5);
+  filter: brightness(0.3);
   cursor: default;
 }
 
 .button-cancel {
   background-color: #d52e00;
+  flex: 0.35;
 }
 
 .button-upload {
   background-color: #2e75b6;
+  flex: 1;
+
 }
 
 .button-send {
   background-color: #248f24;
+  flex: 0.65;
 }
 
 /* ------------ */
+
+@media (max-width: 480px) {
+  .input-container {
+    height: 35vh;
+  }
+  .form-container {
+    flex-direction: column;
+  }
+  .form-container .textinput {
+    flex: 1;
+  }
+  .form-container .image-part {
+    min-width: 100%;
+    flex: 0.6;
+  }
+  .form-container .image-part .image-buttons {
+  }
+}

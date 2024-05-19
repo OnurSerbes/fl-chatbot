@@ -30,6 +30,10 @@ def get_local_ip():
 server_address = get_local_ip()
 port_number = "8080"
 
+# Client ID
+client_id = 0
+
+
 # Load server address and port number from command-line arguments or use default
 # Use the function to get the local IP address
 # server_address = "192.168.1.157"
@@ -55,7 +59,7 @@ model = ks.Sequential([
 
 model.compile(optimizer='adam', loss=ks.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
 
-X_train, X_val, y_train, y_val = load_partition(int(sys.argv[1]))
+X_train, X_val, y_train, y_val = load_partition(client_id)
 
 # Define the labels
 labels = get_labels()
@@ -69,10 +73,18 @@ def predict_image(image_bytes):
     image = image.resize((IMG_SIZE, IMG_SIZE))  # Resize the image to match the input size of the model
     image = np.array(image) / 255.0  # Normalize pixel values to [0, 1]
     image = np.expand_dims(image, axis=0)  # Add batch dimension
+    
+    # Predict probabilities using the model
     predictions = model.predict(image)
-    predicted_label_index = np.argmax(predictions)
-    probability = np.max(predictions)
+    
+    # Apply softmax activation to ensure valid probabilities
+    probabilities = ks.activations.softmax(predictions).numpy()
+    
+    # Extract predicted label and its corresponding probability
+    predicted_label_index = np.argmax(probabilities)
+    probability = probabilities[0, predicted_label_index]
     predicted_label = labels[predicted_label_index]
+    
     return predicted_label, probability
 
 
@@ -174,7 +186,7 @@ def get_image_paths():
 # Metod to retrun client id
 @app.route('/get-client-id', methods=['GET'])
 def get_client_id():
-    client_id = int(sys.argv[1])
+    client_id = int(client_id)
     return jsonify({"client_id": client_id}), 200
 
 
@@ -239,7 +251,6 @@ def run_flower():
 
 # Main Metod
 def main():
-    client_id = int(sys.argv[1])
     port = 5001 + client_id
     #run_flower()
     app.run(host="0.0.0.0", port=port, debug=True)

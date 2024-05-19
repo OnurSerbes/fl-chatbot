@@ -1,215 +1,255 @@
-
 // IMPORT React
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // IMPORT Components
 import Header from "./components/Header";
 import ChatContainer from "./components/ChatContainer";
 import InputContainer from "./components/InputContainer";
-import Modal from "./components/Modal";
+import LoginModal from "./components/LoginModal";
 
 // IMPORT Styling
 import "./index.css";
 
 // IMPORT Utilities
-import { sendImageDataToServer } from "./utils";
+import { sendImageDataToServer, startFederatedLearning } from "./utils";
 
 // COMPONENT App.js
 const App = () => {
-
   // VARIABLE Header title
-  const headerTitle = "Brain Tumor Classifier"; // Title for the header
+  const headerTitle = "Brain Tumor Classifier";
 
-  // STATES
+  // TEST DUMMY Labels
+  const dummyLabel = () => {
+    const dummyLabels = ["Menengioma", "Glioma", "Pituatuary", "None"];
+    const index = Math.floor(Math.random() * dummyLabels.length);
+    return dummyLabels[index];
+  };
+
+  // TEST DUMMY Confidence
+  const dummyConfidence = () => {
+    return 60 + Math.random() * 40;
+  };
+
+  // STATES utilized within App.js
   const [messages, setMessages] = useState([]);
-  const [showModal, setShowModal] = useState(true); // to control modal visibility
-  const [userInfo, setUserInfo] = useState(null); // to hold user information
-  const [loading, setLoading] = useState(false); // to track loading state
+  const [userLogged, setUserLogged] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [busy, setBusy] = useState(false);
 
-  /**
-   * FUNCTION Send Message
-   * sends message to server
-   * @param {*} text
-   * @param {*} imageFile
-   */
-  const sendMessage = async (text, imageFile) => {
+  // TEST STATES SYSTEM MESSAGE PROMPTING
+  const [reqFL, setReqFL] = useState(false);
+  const [readyFL, setReadyFL] = useState(false);
+  const [isFirst, setIsFirst] = useState(true);
 
-    // CONDITION if an image was uploaded
+  // STATES utilized within InputContainer
+  const [inputText, setInputText] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [blobUrl, setBlobUrl] = useState("");
+  const fileInputRef = useRef(null);
+
+  // OBJECT states to be passed down to child components
+  const statesInput = {
+    inputText, setInputText,
+    imageFile, setImageFile,
+    blobUrl, setBlobUrl,
+    busy, setBusy,
+    fileInputRef
+  };
+
+  const statesFL = {
+    reqFL, setReqFL,
+    readyFL, setReadyFL,
+  };
+
+  const uploadImage = (imageFile) => {
     if (imageFile) {
+      const newUploadMessage = {
+        sender: "user",
+        imageFile: imageFile,
+        temp: true,
+      };
+      setMessages((prevMessages) => [...prevMessages, newUploadMessage]);
+    }
+  };
 
-      // TESTLOG imageFile
-      console.log(`imageFile:`)
-      console.log(imageFile);
+  const cancelImage = async () => {
+    setMessages((prevMessages) => prevMessages.filter(message => !message.temp));
+  };
 
-      // LET name of current image to be displayed later
+  const printMessage = (message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
+
+  const sendMessage = async (text, imageFile) => {
+    setBusy(true);
+
+    if (imageFile) {
+      console.log('imageFile: ', imageFile);
+
       let currImageName = '';
 
-      /**
-       * [1] VALIDATION of provided image and text input
-       * TODO: we should perform the following verifications:
-       * - that an input image have been uploaded/provided
-       * - that provided input image is in an acceptable format and dimensions
-       * - that the text input is within a certain size
-       * - that the text input includes only legal characters
-       */
-
-      // DUMMY storifier delay durations
       const dummyAnalysisStageDelays = Array.from({ length: 5 }, () => Math.floor(Math.random() * 2000) + 1000);
       const dummyAnalysisTotalDelay = dummyAnalysisStageDelays.reduce((acc, curr) => acc + curr, 0);
 
-      // DUMMY upload delay
-      const delayUpload = Math.floor(Math.random() * 1000) + 2000;
-
-      // FLAG for image uploading interval
-      setLoading(true); // intended to remain true during upload interval
-
-      // DATA of image to be sent to the server
       const formData = new FormData();
       formData.append("file", imageFile);
 
-      // TESTLOG imageFile name
-      console.log(`imageFile name:`);
-      console.log(imageFile.name);
-
-      // SEND image data via 'sendImageDataToServer'
+      console.log('Sending image data to server');
       const imageDataResponse = await sendImageDataToServer(formData);
+      console.log('imageDataResponse: ', imageDataResponse);
 
-      // TESTLOG imageDataResponse
-      console.log(`imageDataRespomse:`);
-      console.log(imageDataResponse);
+      if (true) {
+        const fakeDataResponse = {};
+        fakeDataResponse.label = dummyLabel();
+        fakeDataResponse.probability = dummyConfidence();
 
-      // CONDITION if response received successfull
-      if (imageDataResponse) {
+        const finalResponse = (imageDataResponse ? imageDataResponse : fakeDataResponse);
 
-        // CREATE user message instance
         const newUserMessage = {
           text: text || "Image uploaded.",
           sender: "user",
           imageFile: imageFile,
         };
 
-        // TESTLOG new user message
-        console.log("newUserMessage");
-        console.log(newUserMessage);
-
-        // PUSH new user message to history
         setMessages((prevMessages) => [...prevMessages, newUserMessage]);
 
-        // SAVE image file name for later display
         currImageName = newUserMessage.imageFile.name;
 
-        // COLLECT label and confidence
-        const resultLabel = imageDataResponse.label;
-        const resultConfidence = imageDataResponse.probability.toFixed(2);
-        /*
-        const predictionText = `Predicted: ${imageDataResponse.label}, Probability: ${imageDataResponse.probability.toFixed(2)}%`;
-        */
+        const resultLabel = finalResponse.label;
+        const resultConfidence = finalResponse.probability.toFixed(2);
 
-        // CREATE temporary waiting message (animated storifier)
-        const temporaryMessage = {
+        const newStorifierMessage = {
           sender: "bot",
           temp: true,
           durs: dummyAnalysisStageDelays,
         };
+        setMessages((prevMessages) => [...prevMessages, newStorifierMessage]);
 
-        // TESTLOG temporary message
-        console.log(temporaryMessage);
-        
-        // SIMULATE dummy delay with loading animations of storifier
-        setTimeout(async () => {
-
-          // CREATE bot response message
+        setTimeout(() => {
           const newBotMessage = {
             text: currImageName,
             label: resultLabel,
             confidence: resultConfidence,
-            sender: "bot"
+            sender: "bot",
           };
-          /*
-          const newBotMessage = {
-            text: predictionText,
-            sender: "bot"
-          };
-          */
-    
-          // TESTLOG new bot message
-          console.log(newBotMessage);
-          
-          // POP temporary message then PUSH new bot message to history
+
           setMessages((prevMessages) => prevMessages.filter(message => !message.temp).concat(newBotMessage));
-          
-          // UNFLAG loading state after process is done
-          setLoading(false);
-    
-          // TESTLOG current message history
-          console.log(messages);
-    
-        }, dummyAnalysisTotalDelay)
+
+          setBusy(false);
+
+          if (isFirst) {
+            printMessage(
+              {
+                sender: 'system',
+                label: 'FL calibration complete!',
+                text: 'You can now start uploading MRI scans for FL supported analysis',
+              }
+            );
+            setIsFirst(false);
+            console.log('Starting Federated Learning...');
+            startFederatedLearning();
+          }
+
+        }, dummyAnalysisTotalDelay);
 
       } else {
-        /**
-         * NOTE: code representing behaviour deprecated in previous GUI developments
-         *   const newUserMessage = { text, sender: "user" };
-         *   const newBotMessage = { text: "Text received.", sender: "bot" };
-         *   setMessages(prevMessages => [...prevMessages, newUserMessage, newBotMessage]);
-        */
+        setBusy(false);
       }
-
     }
-
   };
 
-  // FUNCTION Add user
   const addUser = (nameSurname) => {
-    // GENERATE random ID
     const userId = Math.floor(Math.random() * 1000);
-    // CREATE user instance
     const user = { nameSurname, userId };
-    // SET user as current state
     setUserInfo(user);
-    // CLOSE modal
-    setShowModal(false);
-    // TESTLOG current user information
-    console.log("User information:", user);
+    setUserLogged(true);
   };
 
-  // FUNCTION Handle image text editing
   const handleEditMessage = (index, editedText) => {
-    // Update the messages array with the edited text
     const updatedMessages = [...messages];
     updatedMessages[index].text = editedText;
     setMessages(updatedMessages);
   };
 
-  // FUNCTION Handle image deletion
   const handleDeleteMessage = (index) => {
     const newMessages = [...messages];
-    // Remove user message
     newMessages.splice(index, 1);
-    // Check if there's a corresponding bot response to delete
     if (newMessages[index]?.sender === "bot") {
-      newMessages.splice(index, 1); // Remove the bot response
+      newMessages.splice(index, 1);
     }
     setMessages(newMessages);
   };
 
-  // SHOW
-  useEffect(() => {
-    // Show the modal when the component is mounted
-    setShowModal(true);
-  }, []); // Empty dependency array to only run once when component mounts
+  const handlersInput = {
+    handleChange: (e) => {
+      setInputText(e.target.value);
+    },
 
-  // RENDER App.js
+    handleFileChange: (e) => {
+      const file = e.target.files[0];
+      const imagePath = URL.createObjectURL(file);
+      console.log("Image path:", imagePath);
+      setImageFile(file);
+      setBlobUrl(imagePath);
+    },
+
+    handleUploadImage: () => {
+      fileInputRef.current.value = null;
+      fileInputRef.current.click();
+    },
+
+    handleCancelImage: () => {
+      setInputText("");
+      setImageFile(null);
+      setBlobUrl("");
+    },
+
+    handleSubmit: async (e) => {
+      e.preventDefault();
+      if (inputText.trim() !== "" || imageFile !== null) {
+        await sendMessage(inputText, imageFile, blobUrl);
+        setInputText("");
+        setImageFile(null);
+        setBlobUrl("");
+      }
+    },
+  };
+
+  useEffect(() => {
+    setUserLogged(false);
+  }, []);
+
+  useEffect(() => {
+    if (userLogged) {
+      if (reqFL) {
+        printMessage(
+          {
+            sender: 'system',
+            label: 'FL calibration pending',
+            text: 'Please submit an initial MRI to calibrate federated learning',
+          }
+        );
+      }
+    }
+  }, [reqFL]);
+
   return (
     <div className="app">
       <Header title={headerTitle} />
       <ChatContainer
+        state={statesInput}
         messages={messages}
         onEditMessage={handleEditMessage}
         onDeleteMessage={handleDeleteMessage}
       />
-      <InputContainer sendMessage={sendMessage} loading={loading} />
-      {showModal && <Modal addUser={addUser} />}
+      <InputContainer
+        state={statesInput}
+        handler={handlersInput}
+      />
+      {!userLogged && <LoginModal
+        state={statesFL}
+        addUser={addUser}
+      />}
     </div>
   );
 };
