@@ -822,3 +822,57 @@ myFlowerExperiment | INFO flwr 2024-05-19 16:54:40,914 | app.py:150 | Starting F
 myFlowerExperiment | INFO flwr 2024-05-19 16:54:40,951 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
 myFlowerExperiment | INFO flwr 2024-05-19 16:54:40,952 | server.py:92 | [INIT]
 myFlowerExperiment | INFO flwr 2024-05-19 16:54:40,952 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 22:45:58,100 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
+myFlowerExperiment | INFO flwr 2024-05-19 22:45:58,155 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
+myFlowerExperiment | INFO flwr 2024-05-19 22:45:58,156 | server.py:92 | [INIT]
+myFlowerExperiment | INFO flwr 2024-05-19 22:45:58,156 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:04:14,134 | server.py:285 | Received initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:04:14,134 | server.py:94 | Evaluating initial global parameters
+myFlowerExperiment | INFO flwr 2024-05-19 23:04:17,933 | server.py:97 | initial parameters (loss, other metrics): 1.3786993026733398, {'accuracy': 0.3274111747741699}
+myFlowerExperiment | INFO flwr 2024-05-19 23:04:17,934 | server.py:110 | 
+myFlowerExperiment | INFO flwr 2024-05-19 23:04:17,934 | server.py:111 | [ROUND 1]
+myFlowerExperiment | INFO flwr 2024-05-19 23:14:10,717 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
+myFlowerExperiment | INFO flwr 2024-05-19 23:14:10,764 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
+myFlowerExperiment | INFO flwr 2024-05-19 23:14:10,765 | server.py:92 | [INIT]
+myFlowerExperiment | INFO flwr 2024-05-19 23:14:10,765 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:16:01,663 | server.py:285 | Received initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:16:01,664 | server.py:94 | Evaluating initial global parameters
+myFlowerExperiment | INFO flwr 2024-05-19 23:16:03,416 | server.py:97 | initial parameters (loss, other metrics): 1.3876938819885254, {'accuracy': 0.2563451826572418}
+myFlowerExperiment | INFO flwr 2024-05-19 23:16:03,417 | server.py:110 | 
+myFlowerExperiment | INFO flwr 2024-05-19 23:16:03,417 | server.py:111 | [ROUND 1]
+myFlowerExperiment | INFO flwr 2024-05-19 23:20:50,071 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
+myFlowerExperiment | INFO flwr 2024-05-19 23:20:50,095 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
+myFlowerExperiment | INFO flwr 2024-05-19 23:20:50,096 | server.py:92 | [INIT]
+myFlowerExperiment | INFO flwr 2024-05-19 23:20:50,096 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:25:00,746 | server.py:285 | Received initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:25:00,746 | server.py:94 | Evaluating initial global parameters
+myFlowerExperiment | INFO flwr 2024-05-19 23:25:02,430 | server.py:97 | initial parameters (loss, other metrics): 1.4175289869308472, {'accuracy': 0.1928934007883072}
+myFlowerExperiment | INFO flwr 2024-05-19 23:25:02,430 | server.py:110 | 
+myFlowerExperiment | INFO flwr 2024-05-19 23:25:02,430 | server.py:111 | [ROUND 1]
+myFlowerExperiment | INFO flwr 2024-05-19 23:40:32,333 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
+myFlowerExperiment | INFO flwr 2024-05-19 23:40:32,342 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
+myFlowerExperiment | INFO flwr 2024-05-19 23:40:32,343 | server.py:92 | [INIT]
+myFlowerExperiment | INFO flwr 2024-05-19 23:40:32,343 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:41:18,484 | server.py:285 | Received initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:41:18,485 | server.py:94 | Evaluating initial global parameters
+myFlowerExperiment | INFO flwr 2024-05-19 23:41:20,369 | server.py:97 | initial parameters (loss, other metrics): 1.416812539100647, {'accuracy': 0.2893401086330414}
+myFlowerExperiment | INFO flwr 2024-05-19 23:41:20,370 | server.py:110 | 
+myFlowerExperiment | INFO flwr 2024-05-19 23:41:20,370 | server.py:111 | [ROUND 1]
+myFlowerExperiment | INFO flwr 2024-05-19 23:56:21,280 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
+myFlowerExperiment | INFO flwr 2024-05-19 23:56:21,297 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
+myFlowerExperiment | INFO flwr 2024-05-19 23:56:21,297 | server.py:92 | [INIT]
+myFlowerExperiment | INFO flwr 2024-05-19 23:56:21,298 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:57:15,601 | server.py:285 | Received initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-19 23:57:15,602 | server.py:94 | Evaluating initial global parameters
+myFlowerExperiment | INFO flwr 2024-05-19 23:57:17,468 | server.py:97 | initial parameters (loss, other metrics): 1.3949488401412964, {'accuracy': 0.29441624879837036}
+myFlowerExperiment | INFO flwr 2024-05-19 23:57:17,469 | server.py:110 | 
+myFlowerExperiment | INFO flwr 2024-05-19 23:57:17,469 | server.py:111 | [ROUND 1]
+myFlowerExperiment | INFO flwr 2024-05-19 23:59:16,867 | app.py:150 | Starting Flower server, config: num_rounds=10, no round_timeout
+myFlowerExperiment | INFO flwr 2024-05-19 23:59:16,899 | app.py:163 | Flower ECE: gRPC server running (10 rounds), SSL is disabled
+myFlowerExperiment | INFO flwr 2024-05-19 23:59:16,900 | server.py:92 | [INIT]
+myFlowerExperiment | INFO flwr 2024-05-19 23:59:16,900 | server.py:279 | Requesting initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-20 00:00:29,743 | server.py:285 | Received initial parameters from one random client
+myFlowerExperiment | INFO flwr 2024-05-20 00:00:29,744 | server.py:94 | Evaluating initial global parameters
+myFlowerExperiment | INFO flwr 2024-05-20 00:00:31,429 | server.py:97 | initial parameters (loss, other metrics): 1.378853678703308, {'accuracy': 0.2918781638145447}
+myFlowerExperiment | INFO flwr 2024-05-20 00:00:31,429 | server.py:110 | 
+myFlowerExperiment | INFO flwr 2024-05-20 00:00:31,429 | server.py:111 | [ROUND 1]

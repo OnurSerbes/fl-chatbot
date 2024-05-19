@@ -11,18 +11,17 @@ import LoginModal from "./components/LoginModal";
 import "./index.css";
 
 // IMPORT Utilities
-import { sendImageDataToServer } from "./utils";
+import { sendImageDataToServer, startFederatedLearning } from "./utils";
 
 // COMPONENT App.js
 const App = () => {
   // VARIABLE Header title
-  // TODO COULD MIGRATE THIS IMPLEMENTATION
   const headerTitle = "Brain Tumor Classifier";
 
   // TEST DUMMY Labels
   const dummyLabel = () => {
-    const dummyLabels = ["Menengioma", "Glioma", "Pituatuary", "None"]
-    const index = Math.floor(Math.random() * 5);
+    const dummyLabels = ["Menengioma", "Glioma", "Pituatuary", "None"];
+    const index = Math.floor(Math.random() * dummyLabels.length);
     return dummyLabels[index];
   };
 
@@ -36,15 +35,11 @@ const App = () => {
   const [userLogged, setUserLogged] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [busy, setBusy] = useState(false);
-  
+
   // TEST STATES SYSTEM MESSAGE PROMPTING
   const [reqFL, setReqFL] = useState(false);
   const [readyFL, setReadyFL] = useState(false);
   const [isFirst, setIsFirst] = useState(true);
-
-  // TODO COUNT MESSAGES
-  // buraya coutner state ve baska bi yere threshold degeri
-  // FL'i X'inci mesajdan sonra baslatmak icin
 
   // STATES utilized within InputContainer
   const [inputText, setInputText] = useState("");
@@ -53,163 +48,95 @@ const App = () => {
   const fileInputRef = useRef(null);
 
   // OBJECT states to be passed down to child components
-  const statesInput =
-  {
+  const statesInput = {
     inputText, setInputText,
     imageFile, setImageFile,
     blobUrl, setBlobUrl,
     busy, setBusy,
     fileInputRef
-  }
+  };
 
-  const statesFL = 
-  {
+  const statesFL = {
     reqFL, setReqFL,
     readyFL, setReadyFL,
-  }
+  };
 
-  /**
-   * TODO: tried to implement post-upload image display but got:
-   * 'Failed to execute 'CreateObjectURL' on 'URL':
-   * Overload Resolution Failed
-   */ 
   const uploadImage = (imageFile) => {
-    console.log("call: uploadImage"); // TESTLOG
     if (imageFile) {
-      console.log("imageFile: ", imageFile ? imageFile : "none"); // TESTLOG
       const newUploadMessage = {
         sender: "user",
         imageFile: imageFile,
         temp: true,
       };
-      console.log("|ADD MSG|", newUploadMessage); // TESTLOG
       setMessages((prevMessages) => [...prevMessages, newUploadMessage]);
-      console.log(messages); // TESTLOG
     }
   };
 
-  // FUNCTION cancel image
   const cancelImage = async () => {
-    console.log("call: cancelImage"); // TESTLOG
-    setMessages((prevMessages) => prevMessages.filter(message => !message.temp))
-  }
+    setMessages((prevMessages) => prevMessages.filter(message => !message.temp));
+  };
 
-  // TODO REMOVE METHOD IF OBSOLETE LATER
   const printMessage = (message) => {
     setMessages((prevMessages) => [...prevMessages, message]);
-  }
+  };
 
-  /**
-   * FUNCTION Send Message
-   * sends message to server
-   * @param {*} text
-   * @param {*} imageFile
-   */
   const sendMessage = async (text, imageFile) => {
-    console.log("call: sendMessage"); // TESTLOG
-
     setBusy(true);
 
-    // CONDITION if an image was uploaded
     if (imageFile) {
-
-      // TESTLOG imageFile
       console.log('imageFile: ', imageFile);
 
-      // LET name of current image to be displayed later
       let currImageName = '';
 
-      // DUMMY storifier delay durations
       const dummyAnalysisStageDelays = Array.from({ length: 5 }, () => Math.floor(Math.random() * 2000) + 1000);
       const dummyAnalysisTotalDelay = dummyAnalysisStageDelays.reduce((acc, curr) => acc + curr, 0);
 
-      // DUMMY upload delay
-      const delayUpload = Math.floor(Math.random() * 1000) + 2000;
-
-      // FLAG for image uploading interval
-
-      // DATA of image to be sent to the server
       const formData = new FormData();
       formData.append("file", imageFile);
-      console.log(formData); // TESTLOG
 
-      // TESTLOG imageFile name
-      console.log('imageFile.name', imageFile.name); // TESTLOG
-
-      // SEND image data via 'sendImageDataToServer'
+      console.log('Sending image data to server');
       const imageDataResponse = await sendImageDataToServer(formData);
+      console.log('imageDataResponse: ', imageDataResponse);
 
-      // TESTLOG imageDataResponse
-      console.log('imageDataResponse: ', imageDataResponse); // TESTLOG
-
-      // CONDITION if response received successfull
-      if (true) { // TODO: put imageDataResponse back here
-
-        // TEST DUMMY Response
+      if (true) {
         const fakeDataResponse = {};
-          fakeDataResponse.label = dummyLabel();
-          fakeDataResponse.probability = dummyConfidence();
+        fakeDataResponse.label = dummyLabel();
+        fakeDataResponse.probability = dummyConfidence();
 
-        const finalResponse = ( imageDataResponse ? imageDataResponse : fakeDataResponse )
+        const finalResponse = (imageDataResponse ? imageDataResponse : fakeDataResponse);
 
-        // CREATE user message instance
         const newUserMessage = {
           text: text || "Image uploaded.",
           sender: "user",
           imageFile: imageFile,
         };
-        console.log("|ADD MSG|", newUserMessage); // TESTLOG
 
-        // TESTLOG new user message
-        console.log('newUserMessage: ', newUserMessage);
-
-        // PUSH new user message to history
         setMessages((prevMessages) => [...prevMessages, newUserMessage]);
-        console.log("|ADD MSG|", newUserMessage); // TESTLOG
 
-        // SAVE image file name for later display
         currImageName = newUserMessage.imageFile.name;
 
-        // COLLECT label and confidence
         const resultLabel = finalResponse.label;
         const resultConfidence = finalResponse.probability.toFixed(2);
 
-        // CREATE temporary waiting message (animated storifier)
         const newStorifierMessage = {
           sender: "bot",
           temp: true,
           durs: dummyAnalysisStageDelays,
         };
-        console.log("|ADD MSG|", newStorifierMessage); // TESTLOG
         setMessages((prevMessages) => [...prevMessages, newStorifierMessage]);
 
         setTimeout(() => {
-
-          // TESTLOG temporary message
-          console.log(newStorifierMessage); // TESTLOG
-
-          // CREATE bot response message
           const newBotMessage = {
             text: currImageName,
             label: resultLabel,
             confidence: resultConfidence,
             sender: "bot",
           };
-          console.log("|ADD MSG|", newBotMessage); // TESTLOG
 
-          // TESTLOG new bot message
-          console.log(newBotMessage); // TESTLOG
-          
-          // POP temporary message then PUSH new bot message to history
-          console.log("|RMV MSG| temp"); // TESTLOG
           setMessages((prevMessages) => prevMessages.filter(message => !message.temp).concat(newBotMessage));
-
-          // TESTLOG current message history
-          console.log('Messages: ', messages);
 
           setBusy(false);
 
-          // TO FINALIZE print FL ready message
           if (isFirst) {
             printMessage(
               {
@@ -219,134 +146,93 @@ const App = () => {
               }
             );
             setIsFirst(false);
+            console.log('Starting Federated Learning...');
+            startFederatedLearning();
           }
 
-        }, dummyAnalysisTotalDelay)
+        }, dummyAnalysisTotalDelay);
 
       } else {
         setBusy(false);
       }
-
     }
-
   };
 
-  // FUNCTION Add user with applied proper user name input validation loop
   const addUser = (nameSurname) => {
-    console.log("---ADDING USER---"); // TESTLOG
-    console.log("call: addUser"); // TESTLOG
-    // GENERATE random ID
     const userId = Math.floor(Math.random() * 1000);
-    // CREATE user instance
     const user = { nameSurname, userId };
-    // SET user as current state
     setUserInfo(user);
-    // CLOSE modal
     setUserLogged(true);
-    // TESTLOG current user information
-    console.log("User information:", user);
   };
 
-  // FUNCTION Handle image text editing
   const handleEditMessage = (index, editedText) => {
-    console.log("---EDITING MESSAGE---"); // TESTLOG
-    console.log("call: handleEditMessage"); // TESTLOG
-    // Update the messages array with the edited text
     const updatedMessages = [...messages];
     updatedMessages[index].text = editedText;
     setMessages(updatedMessages);
-    console.log(`|UPDATED| message {id: ${index}} `, updatedMessages[index]); // TESTLOG
   };
 
-  // FUNCTION Handle image deletion
   const handleDeleteMessage = (index) => {
-    console.log("---DELETED MESSAGE---"); // TESTLOG
-    console.log("call: handleDeleteMessage"); // TESTLOG
     const newMessages = [...messages];
-    // Remove user message
-    console.log(`|DELETED| message {id: ${index}}`, newMessages[index]); // TESTLOG
     newMessages.splice(index, 1);
-    // Check if there's a corresponding bot response to delete
     if (newMessages[index]?.sender === "bot") {
-      console.log(`|DELETED| message {id: ${index}}`, newMessages[index]); // TESTLOG
-      newMessages.splice(index, 1); // Remove the bot response
+      newMessages.splice(index, 1);
     }
     setMessages(newMessages);
   };
 
-  const handlersInput = 
-  {
-
+  const handlersInput = {
     handleChange: (e) => {
       setInputText(e.target.value);
     },
 
     handleFileChange: (e) => {
-      console.log("---CHANGED FILE---");
-      console.log("call: handleFileChange"); // TESTLOG
       const file = e.target.files[0];
-      const imagePath = URL.createObjectURL(file); // Get the path of the uploaded image
-      console.log("Image path:", imagePath); // Log the image path to the console
-      setImageFile(file); // Store the file object in state
-      setBlobUrl(imagePath); // Store the Blob URL in state
-      // uploadImage(imagePath); TODO: ask this later on
+      const imagePath = URL.createObjectURL(file);
+      console.log("Image path:", imagePath);
+      setImageFile(file);
+      setBlobUrl(imagePath);
     },
 
     handleUploadImage: () => {
-      console.log("---SELECTING IMAGE---");
-      console.log("call: handleUploadImage"); // TESTLOG
-      fileInputRef.current.value = null; // Clear the file input value
-      fileInputRef.current.click(); // Trigger click event on file input
+      fileInputRef.current.value = null;
+      fileInputRef.current.click();
     },
 
     handleCancelImage: () => {
-      console.log("---CANCELLED IMAGE---");
-      console.log("call: handleCancelImage"); // TESTLOG
-      setInputText(""); // Clear the input text
-      setImageFile(null); // Clear the selected image file
-      setBlobUrl(""); // Clear the Blob URL
+      setInputText("");
+      setImageFile(null);
+      setBlobUrl("");
     },
 
     handleSubmit: async (e) => {
-      console.log("---SUBMITTING IMAGE---");
-      console.log("call: handleSubmit"); // TESTLOG
       e.preventDefault();
       if (inputText.trim() !== "" || imageFile !== null) {
-        // call: sendMessage with input text and image URL
         await sendMessage(inputText, imageFile, blobUrl);
         setInputText("");
         setImageFile(null);
-        setBlobUrl(""); // Clear the Blob URL after sending the message
+        setBlobUrl("");
       }
     },
-  }
+  };
 
-  // DESCRIBE INITIAL SYSTEM BEHAVIOUR BELOW
-
-  // SET user login status to show or hide modal
   useEffect(() => {
     setUserLogged(false);
-    console.log("---SHOW LOGIN---"); // TESTLOG
-    console.log("effect: null, show login modal"); // TESTLOG
-  }, []); // Empty dependency array to only run once when component mounts
+  }, []);
 
   useEffect(() => {
     if (userLogged) {
-      console.log('---SYSTEM REQUEST INITIAL SUBMIT---')
-      console.log(`reqFL: ${reqFL}`)
       if (reqFL) {
         printMessage(
           {
             sender: 'system',
             label: 'FL calibration pending',
-            text: 'Please submit an initial MRI to calibrate fedetated learning',
+            text: 'Please submit an initial MRI to calibrate federated learning',
           }
         );
       }
     }
-  }, [reqFL])
+  }, [reqFL]);
 
-  // RENDER App.js
   return (
     <div className="app">
       <Header title={headerTitle} />
@@ -361,8 +247,8 @@ const App = () => {
         handler={handlersInput}
       />
       {!userLogged && <LoginModal
-      state={statesFL}
-      addUser={addUser}
+        state={statesFL}
+        addUser={addUser}
       />}
     </div>
   );

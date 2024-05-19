@@ -26,4 +26,19 @@ export const sendImageDataToServer = async (imageData) => {
   }
 };
 
-// TODO FL endpoint
+// METHOD to start federated learning and get the results
+export const startFederatedLearning = async () => {
+  try {
+    const response = await axios.get("http://localhost:5001/start-fl");
+    if (response.status === 200) {
+      console.log("Federated Learning started successfully.", response.data);
+      return response.data; // server response includes federated learning results
+    } else {
+      console.error("Error starting Federated Learning:", response.statusText);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error starting Federated Learning:", error.message);
+    return null;
+  }
+};
