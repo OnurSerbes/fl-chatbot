@@ -42,6 +42,10 @@ const App = () => {
   const [readyFL, setReadyFL] = useState(false);
   const [isFirst, setIsFirst] = useState(true);
 
+  // TODO COUNT MESSAGES
+  // buraya coutner state ve baska bi yere threshold degeri
+  // FL'i X'inci mesajdan sonra baslatmak icin
+
   // STATES utilized within InputContainer
   const [inputText, setInputText] = useState("");
   const [imageFile, setImageFile] = useState(null);

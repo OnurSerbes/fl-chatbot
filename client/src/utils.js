@@ -1,10 +1,11 @@
+
 import axios from "axios";
 
 // METHOD to send image data to the server as bytes
 export const sendImageDataToServer = async (imageData) => {
   try {
     const response = await axios.post(
-      "http://localhost:5000/predict-bytes", // Update port number to 5000
+      "http://localhost:5001/predict-bytes",
       imageData,
       {
         headers: {
@@ -24,3 +25,5 @@ export const sendImageDataToServer = async (imageData) => {
     return null;
   }
 };
+
+// TODO FL endpoint
