@@ -30,9 +30,12 @@
 
 .message.sys {
   justify-content: center; /* Align system messages in the center */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
-  background-color: #999; /* TODO REMOVE */
+  background-color: #2a2a2a; /* TODO REMOVE */
 }
 
 /* Sticking buttons to the side of the info section */

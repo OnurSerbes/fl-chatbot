@@ -119,7 +119,6 @@ const Message = ({ message, onEdit, onDelete, busy }) => {
       ) : isSystem && ( /* SYSTEM MESSAGE */
         <div className="message sys">
           {/* TODO: PROPER STYLING OF SYSTEM MESSAGE */}
-          {'SYSTEM MESSAGE WILL BE PRINTED HERE'}
           <CardSysinfo
             label={label}
             text={text}

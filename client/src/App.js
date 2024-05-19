@@ -40,6 +40,7 @@ const App = () => {
   // TEST STATES SYSTEM MESSAGE PROMPTING
   const [reqFL, setReqFL] = useState(false);
   const [readyFL, setReadyFL] = useState(false);
+  const [isFirst, setIsFirst] = useState(true);
 
   // STATES utilized within InputContainer
   const [inputText, setInputText] = useState("");
@@ -83,16 +84,15 @@ const App = () => {
     }
   };
 
-// FUNCTION cancel image
-const cancelImage = async () => {
-  console.log("call: cancelImage"); // TESTLOG
-  setMessages((prevMessages) => prevMessages.filter(message => !message.temp))
-}
+  // FUNCTION cancel image
+  const cancelImage = async () => {
+    console.log("call: cancelImage"); // TESTLOG
+    setMessages((prevMessages) => prevMessages.filter(message => !message.temp))
+  }
 
   // TODO REMOVE METHOD IF OBSOLETE LATER
-  const printSystemMessage = (label, text) => {
-    const sysMsg ={ sender: 'system', label: label, text: text }
-    setMessages((prevMessages) => [...prevMessages, sysMsg]);
+  const printMessage = (message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
   }
 
   /**
@@ -204,6 +204,12 @@ const cancelImage = async () => {
           console.log('Messages: ', messages);
 
           setBusy(false);
+
+          // TO FINALIZE print FL ready message
+          if (isFirst) {
+            printMessage('FL calibration complete!', 'You can now start uploading MRI scans for FL supported analysis');
+            setIsFirst(false);
+          }
 
         }, dummyAnalysisTotalDelay)
 
@@ -319,7 +325,13 @@ const cancelImage = async () => {
       console.log('---SYSTEM REQUEST INITIAL SUBMIT---')
       console.log(`reqFL: ${reqFL}`)
       if (reqFL) {
-        printSystemMessage('gfdgfd', 'fsdfsdgd');
+        printMessage(
+          {
+            sender: 'system',
+            label: 'FL calibration pending',
+            text: 'Please submit an initial MRI to calibrate fedetated learning',
+          }
+        );
       }
     }
   }, [reqFL])

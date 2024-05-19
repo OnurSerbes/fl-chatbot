@@ -11,6 +11,8 @@
   max-width: 35%;
   text-align: center;
   min-height: 200px;
+  /* TEMP */
+  color: #ddd;
 }
 
 .label-storifier, .counter-storifier {

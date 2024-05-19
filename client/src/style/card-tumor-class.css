@@ -34,6 +34,7 @@
 .classification-info {
   display: flex;
   flex-direction: column;
+  /* TEMP */ color: #ddd;
 }
 
 .subtext {
@@ -41,6 +42,7 @@
   font-size: 16px;
   font-weight: bold;
   padding-block: 2px;
+  /* TEMP */ color: #ddd;
 }
 
 /* TODO REMOVE TRUNCATION IF REQUIRED SO */
@@ -53,6 +55,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  /* TEMP */ color: #ddd;
 }
 
 .label {

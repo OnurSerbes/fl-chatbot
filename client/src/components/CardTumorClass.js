@@ -5,19 +5,17 @@ import "../style/card-tumor-class.css"; // Import CSS for styling
 
 const foregroundIntensityFactor = 0.6;
 const backgroundIntensityFactor = 0.4;
-const confidenceThreshold = 70;
+const confidenceThreshold = 0; // TODO REPLACE WITH ACTUAL THRESHOLD LATER ON
 
 const CardTumorClass = ({ text, label, confidence }) => {
   const isClean = label === "None";
 
-  const percent = Number.parseInt(confidence);
-
   const backgroundIntensity =
-    (7.5 + percent - confidenceThreshold) /
+    (7.5 + (confidence * 100) - confidenceThreshold) /
     ((100 - confidenceThreshold) / backgroundIntensityFactor);
 
   const foregroundIntensity =
-    (12.5 + percent - confidenceThreshold) /
+    (12.5 + (confidence * 100) - confidenceThreshold) /
     ((100 - confidenceThreshold) / foregroundIntensityFactor);
 
   const foregroundColor = isClean
@@ -40,8 +38,8 @@ const CardTumorClass = ({ text, label, confidence }) => {
           <div className="subtext">{"with"}</div>
           <div className="confidence-wheel">
             <CircularProgressbar
-              value={percent}
-              text={`${percent}%`}
+              value={ confidence * 100 }
+              text={`${ confidence * 100 }%`} // FIX TEMPORARY IMPLEMENTATION FEASIBLE
               strokeWidth={15}
               styles={buildStyles({
                 strokeLinecap: "butt",
