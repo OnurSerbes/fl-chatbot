@@ -24,14 +24,7 @@ const Header = ({ title }) => {
       </div>
       {/* BUTTON CONTAINER FOR TUTORIAL MODAL AND ACCESSIBILITY SETTINGS */}
       <div className="section-buttons">
-        <div className="status-fl">
-          <div className="label-fl">
-            Federated learning status:
-          </div>
-          <div className="status">
-            READY
-          </div>
-        </div>
+        {/* FEDERATED LEARNING STATUS */}
         <div className="buttonbox">
           <button className="">
             Info
