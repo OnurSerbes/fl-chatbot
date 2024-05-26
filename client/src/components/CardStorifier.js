@@ -14,7 +14,6 @@ import '../style/storifier.css'; // Import CSS for styling
  */
 
 /**
- * TODO: Temporary parameter durs for collecting
  * randomized step durations from the outside
  */
 const CardStorifier = ({ durs }) => {

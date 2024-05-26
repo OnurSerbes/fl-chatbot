@@ -3,19 +3,19 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import "../style/card-tumor-class.css"; // Import CSS for styling
 
-const foregroundIntensityFactor = 0.6;
-const backgroundIntensityFactor = 0.4;
-const confidenceThreshold = 0; // TODO REPLACE WITH ACTUAL THRESHOLD LATER ON
+const foregroundIntensityFactor = 1;
+const backgroundIntensityFactor = 0.5;
+const confidenceThreshold = 60;
 
 const CardTumorClass = ({ text, label, confidence }) => {
-  const isClean = label === "None";
+  const isClean = (label === "No Tumor") || (label === "None");
 
   const backgroundIntensity =
-    (7.5 + (confidence * 100) - confidenceThreshold) /
+    ((confidence) - confidenceThreshold) /
     ((100 - confidenceThreshold) / backgroundIntensityFactor);
 
   const foregroundIntensity =
-    (12.5 + (confidence * 100) - confidenceThreshold) /
+    ((confidence) - confidenceThreshold) /
     ((100 - confidenceThreshold) / foregroundIntensityFactor);
 
   const foregroundColor = isClean
@@ -38,8 +38,8 @@ const CardTumorClass = ({ text, label, confidence }) => {
           <div className="subtext">{"with"}</div>
           <div className="confidence-wheel">
             <CircularProgressbar
-              value={ confidence * 100 }
-              text={`${ confidence * 100 }%`} // FIX TEMPORARY IMPLEMENTATION FEASIBLE
+              value={ confidence }
+              text={`${ confidence }%`}
               strokeWidth={15}
               styles={buildStyles({
                 strokeLinecap: "butt",

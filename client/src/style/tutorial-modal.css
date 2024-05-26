@@ -1,0 +1,45 @@
+
+.tutorial-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-text);
+  }
+  
+  .tutorial-modal-content {
+    background: var(--color-background-base);
+    padding: 20px;
+    border-radius: 8px;
+    width: max(280px, 50vw);
+    max-width: 100%;
+  }
+  
+  .tutorial-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-background-detail);
+    padding-bottom: 10px;
+  }
+  
+  .tutorial-modal-title {
+    margin: 0;
+  }
+  
+  .tutorial-modal-close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  .tutorial-modal-body {
+    padding-top: 10px;
+  }
+  

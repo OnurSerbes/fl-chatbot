@@ -4,9 +4,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: var(--input-container-height);
+  height: var(--input-height-desktop);
   padding: 8px;
-  background-color: #333;
+  background-color: var(--color-background-detail);
   position: fixed;
   bottom: 0;
   left: 0;
@@ -47,7 +47,7 @@
   margin: 6px;
   border: none;
   border-radius: 15px;
-  background-color: #222;
+  background-color: var(--color-background-base);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   outline: none;
   padding: max(0.5vw, 1.25vh);
@@ -68,7 +68,7 @@
 
 .image-label > * {
   padding-inline: 2px;
-  color: #ddd;
+  color: var(--color-text);
   font-size: 18px;
   font-weight: bold;
 }
@@ -91,7 +91,7 @@
 
 .input-field {
   font-size: max(0.8em, min(1vw, 2vh));
-  color: #ddd;
+  color: var(--color-text);
   font-size: clamp(18px, 3.5vw, 24px);
   width: 100%;
   max-width: 100%;
@@ -127,14 +127,14 @@
 
 .image-buttons button {
   min-height: 35px;
-  font-size: 24px;
+  font-size: 22px;
   padding-inline: 8px;
   height: 100%;
   border: none;
   font-weight: bold;
   border-radius: 15px;
   cursor: pointer;
-  color: #ddd;
+  color: var(--color-text);
   transition: filter 0.3s ease;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -163,9 +163,9 @@
 
 /* ------------ */
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .input-container {
-    height: 35vh;
+    height: var(--input-height-mobile);
   }
   .form-container {
     flex-direction: column;

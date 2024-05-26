@@ -7,7 +7,7 @@ import '../style/modal.css'
 const Modal = ({ state, addUser }) => {
 
   // Validate the input name
-  const nameRegex = /^[a-zA-Z]+\.?(?:\s[a-zA-Z]+\.?)+$/;
+  const nameRegex = /^[\p{L}\p{M}\p{Pd}\p{Zs}\.']+$/u;
 
   const [nameSurname, setNameSurname] = useState(""); // State variable for name and surname input
   const [nameValid, setNameValid] = useState(true);

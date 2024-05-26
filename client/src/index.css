@@ -1,7 +1,18 @@
 
 :root {
-  --input-container-height: max(120px, 11vh);
+  /* TODO? TEST UTILITY */ --test-border: 1px dashed white;
+  /* TODO? TEST UTILITY */ --test-children: 1px dashed blue;
+  --input-height-desktop: max(120px, 11vh);
+  --input-height-mobile: 25vh;
+  --image-dim-desktop: max(min(max(15vh, 25vw), 25vh), var(--image-dim-mobile));
+  --image-dim-mobile: 200px;
+  --text-height: var(--image-dim-desktop);
   --app-header-height: max(80px, 8vh);
+  --color-background-base: #222;
+  --color-background-detail: #333;
+  --color-text: #ddd;
+  --height-button-editimage: 50px;
+  --width-button-editimage: 125px;
 }
 
 /* Reset CSS */
@@ -14,7 +25,7 @@
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #5f5f5f; /* Light gray background */
-  color: #333; /* Dark text color */
+  color: var(--color-dark-background-detail); /* Dark text color */
   overflow-y: scroll; /* Ensure vertical scrollbar always visible */
   display: flex;
   flex-direction: column;
