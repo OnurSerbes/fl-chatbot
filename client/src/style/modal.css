@@ -12,7 +12,7 @@
 }
 
 .modal .label {
-  color: #ddd;
+  color: var(--color-text);
 }
 
 .modal-content {
@@ -37,7 +37,7 @@
   padding: 15px 10px;
   border: 1px solid #777;
   color: #eee;
-  background-color: #222;
+  background-color: var(--color-background-base);
   border-radius: 5px;
   margin-bottom: 5px;
 }

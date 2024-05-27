@@ -1,11 +1,12 @@
 
+/* MAIN CHAT CONTAINER */
 .chat-container {
   flex: 1; /* Allow chat container to grow to fill available vertical space */
   display: flex;
   flex-direction: column;
   gap: 20px; /* Space between messages */
   padding: 20px;
-  background-color: #222; /* White message background */
+  background-color: var(--color-background-base); /* White message background */
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1); /* Light shadow effect */
   position: fixed; /* Fix the container */
   top: var(--app-header-height);
@@ -18,6 +19,7 @@
 /* Display of user messages */
 .message {
   display: flex;
+  padding: 5px;
 }
 
 .message.user {
@@ -35,45 +37,51 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  background-color: #2a2a2a; /* TODO REMOVE */
 }
 
 /* Sticking buttons to the side of the info section */
 .message.user .info-part {
   display: flex;
-  justify-content: flex-end;
+  justify-content: column;
   flex: 1;
-  max-width: max(70vw, 75px);
+  width: 65vw;
+  flex-direction: column-reverse;
+  height: var(--text-height);
 }
 
 .message.user .message-info {
-  flex: 0.7;
+  flex: 1;
   display: flex;
   flex-direction: column;
   text-align: left;
-  background-color: #333;
-  color: #ddd;
+  background-color: var(--color-background-detail);
+  color: var(--color-text);
   padding: 15px;
   border-radius: 20px;
-  min-height: 100%;
+  height: var(--text-height);
 }
 
 .message.user .message-info .edit-area {
   flex: 1;
   margin-top: 7px;
+  border-radius: 5px;
+  background-color: #555;
+  color: #eee;
 }
 
 .message.user .message-image {
-  aspect-ratio: 1;
+  height: var(--image-dim-desktop);
+  min-width: var(--image-dim-desktop);
   object-fit: cover;
 }
 
 .message.user .message-info .filename {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 60%;
 }
 
 .message.user .message-info .infotext {
@@ -82,58 +90,39 @@
 
 /* RESPONSIVE STYLING */
 @media (max-width: 640px) {
+  .chat-container {
+    bottom: var(--input-height-mobile);
+  }
   .message.user {
     align-items: flex-end;
     flex-direction: column;
   }
+  .message.user .info-part {
+    flex-direction: column-reverse;
+    width: 90vw;
+    align-self: center;
+  }
   .message.user .message-info {
-    min-height: 200px;
-    width: 75%;
+    min-height: var(--text-height);
   }
   .message.user .message-image {
-    height: 200px;
+    height: var(--image-dim-mobile);
+    min-width: var(--image-dim-mobile);
   }
 }
 
 @media (min-width: 640px) {
-  .message.user .message-info {
-    min-width: 150px;
-    width: 60%;
-  }
-  .message.user .message-image {
-    min-width: 150px;
-    min-height: 150px;
-  }
-}
-
-@media (max-width: 480px) {
   .chat-container {
-    bottom: 35vh;
+    bottom: var(--input-height-desktop);
   }
-}
-@media (min-width: 480px) {
-  .chat-container {
-    bottom: max(var(--input-container-height), 11vh);
+  .message.user .info-part {
+    max-width: max(400px, 60vw);
   }
 }
 
 .warning-delete {
   text-align: center;
 }
-
-/*
-
-.message p {
-  background-color: #f0f0f0;
-  padding: 15px;
-  border-radius: 20px;
-}
-
-.message.bot p {
-  background-color: #d0e8f2;
-}
-
-*/
 
 .message img {
   max-width: 200px;

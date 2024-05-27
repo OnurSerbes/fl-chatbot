@@ -4,8 +4,8 @@
   justify-content: center;
   align-items: center;
   min-width: 240px;
-  width: 40vw;
-  height: 10vh;
+  width: auto;
+  height: auto;
   background-color: #444;
   border-radius: 20px;
 }
@@ -15,16 +15,17 @@
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  text-align: center;
   height: 100%;
-  padding: 5px;
+  padding: 15px;
   /* TEMP */
-  color: #ddd;
+  color: var(--color-text);
 }
 
 .labelbox .sys-label {
-  font-size: clamp(20px, 1.4vw, 36px);
+  font-size: clamp(22px, 1.6vw, 32px);
 }
 
 .labelbox .sys-text {
-  font-size: clamp(16px, 1.2vw, 30px);
+  font-size: clamp(14px, 1vw, 20px);
 }

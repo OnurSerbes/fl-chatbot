@@ -8,7 +8,6 @@ import Message from "./Message";
 // IMPORT Style
 import '../style/chat-container.css'
 
-// TODO IMPLEMENT HISTORY PARAM FOR INTAKING PREVIOUS MESSAGE HISTORY
 const ChatContainer = ({ messages, onEditMessage, onDeleteMessage, state, history }) => {
   const chatContainerRef = useRef(null);
 

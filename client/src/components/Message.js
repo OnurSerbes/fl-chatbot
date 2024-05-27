@@ -12,7 +12,7 @@ import '../style/message.css'
 const Message = ({ message, onEdit, onDelete, busy }) => {
   const { sender, imageFile, text, label, confidence, temp, durs, onLoad } = message || {};
   const isUser = sender === "user";
-  const isBot = sender === "bot"; // TODO INTEGRATE LATER
+  const isBot = sender === "bot";
   const isSystem = sender === "system";
 
   const [isEditing, setIsEditing] = useState(false);
@@ -118,7 +118,6 @@ const Message = ({ message, onEdit, onDelete, busy }) => {
         </div>
       ) : isSystem && ( /* SYSTEM MESSAGE */
         <div className="message sys">
-          {/* TODO: PROPER STYLING OF SYSTEM MESSAGE */}
           <CardSysinfo
             label={label}
             text={text}
