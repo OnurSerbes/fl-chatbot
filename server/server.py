@@ -8,6 +8,7 @@ from flwr.common import FitRes, Parameters, Scalar
 from flwr.server.client_proxy import ClientProxy
 import socket
 
+
 #from flwr.server.strategy import DifferentialPrivacyClientSideFixedClipping
 
 from utils import load_testing_data
