@@ -85,8 +85,6 @@ def load_partition(index):
     )
 
 
-
-
 def load_data_dicom(test_size=0.2):
     dicom_dir = pathlib.Path(__file__).parent / "dicom"
     X, y = [], []
